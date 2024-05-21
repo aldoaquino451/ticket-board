@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
         'surname' => $surname,
         'username' => $faker->userName(),
         'email' => $email,
-        'password' => $faker->password(8, 32),
+        'password' => '123123123',
       ]);
     }
   }
