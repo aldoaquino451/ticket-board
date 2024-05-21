@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::disableForeignKeyConstraints();
+
+        Schema::create('operators', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
             $table->string('surname', 50);
-            $table->string('username', 50);
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->string('email', 255);
+            $table->boolean('is_available');
             $table->timestamps();
         });
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('operators');
     }
 };
