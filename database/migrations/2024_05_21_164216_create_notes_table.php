@@ -6,29 +6,29 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::disableForeignKeyConstraints();
+  /**
+   * Run the migrations.
+   */
+  public function up(): void
+  {
+    Schema::disableForeignKeyConstraints();
 
-        Schema::create('notes', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('ticket_id');
-            $table->foreign('ticket_id')->references('id')->on('tickets')->onDelete('cascade');
-            $table->text('note');
-            $table->timestamps();
-        });
+    Schema::create('notes', function (Blueprint $table) {
+      $table->id();
+      $table->unsignedBigInteger('ticket_id');
+      $table->foreign('ticket_id')->references('id')->on('tickets')->onDelete('cascade');
+      $table->text('content');
+      $table->timestamps();
+    });
 
-        Schema::enableForeignKeyConstraints();
-    }
+    Schema::enableForeignKeyConstraints();
+  }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('notes');
-    }
+  /**
+   * Reverse the migrations.
+   */
+  public function down(): void
+  {
+    Schema::dropIfExists('notes');
+  }
 };

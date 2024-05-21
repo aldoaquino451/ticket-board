@@ -8,15 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Note extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $fillable = [
-        'ticket_id',
-        'note'
-    ];
+  protected $fillable = [
+    'ticket_id',
+    'content'
+  ];
 
-    public function operator(): BelongsTo
-    {
-        return $this->belongsTo(Ticket::class);
-    }
+  public function operator(): BelongsTo
+  {
+    return $this->belongsTo(Ticket::class);
+  }
 }
