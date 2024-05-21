@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Support\Str;
+
 
 
 class UserSeeder extends Seeder
@@ -22,7 +24,7 @@ class UserSeeder extends Seeder
       $name = $faker->firstName();
       $surname = $faker->lastName();
 
-      $email = lcfirst($name) . '.' . lcfirst($surname) . '@gmail.com';
+      $email = lcfirst($name) . '.' . Str::slug($surname) . '@gmail.com';
 
       User::create([
         'name' => $name,
