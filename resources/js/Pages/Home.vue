@@ -1,56 +1,66 @@
 <script setup>
 import { Head, Link } from "@inertiajs/vue3";
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
-// defineProps({
-//     canLogin: {
-//         type: Boolean,
-//     },
-//     canRegister: {
-//         type: Boolean,
-//     },
-//     laravelVersion: {
-//         type: String,
-//         required: true,
-//     },
-//     phpVersion: {
-//         type: String,
-//         required: true,
-//     },
-// });
+import { ref } from "vue";
+import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+import NavLink from "@/Components/NavLink.vue";
+
+
+const showingNavigationDropdown = ref(false);
+
 </script>
 
 <template>
     <Head title="Home" />
 
-    <div class="flex gap-3">
-        <Link
-            :href="route('dashboard.tickets.index')"
-            class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-            >Dashboard
-        </Link>
+        <div class="min-h-screen bg-gray-100">
+           <!-- Header -->
+            <nav class="bg-white border-b border-gray-100">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between h-16">
+                        <div class="flex">
+                            <!-- Logo -->
+                            <div class="shrink-0 flex items-center">
+                                <Link :href="route('home')">
+                                    <ApplicationLogo
+                                        class="block h-9 w-auto fill-current text-gray-800"
+                                    />
+                                </Link>
+                            </div>
 
-        <Link
-            :href="route('login')"
-            class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-        >
-            Log in
-        </Link>
+                            <!-- Navigation Links -->
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('dashboard.tickets.index')">
+                                  Dashboard
+                                </NavLink>
+   
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
 
-        <Link
-            :href="route('register')"
-            class="ms-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-            >Register
-        </Link>
+            <div class="bg-white max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+              <!-- <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2> -->
+              <div class="flex gap-5">
+              <a :href="route('login')" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out" href="http://127.0.0.1:8000/dashboard/tickets"> Login </a>
+              <a :href="route('register')" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out" href="http://127.0.0.1:8000/dashboard/tickets"> Sign up </a>
 
-        <Link
-            :href="route('logout')"
-            class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-            method="post"
-            as="button"
-        >
-            Log Out
-        </Link>
-    </div>
+              </div>
+            </div>
+
+            <!-- Page Content -->
+            <main>                
+              <div class="py-12">
+                  <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                          <p class="p-6 text-gray-900">Questa è la Guest Homepage del sito!</p>
+                      </div>
+                  </div>
+              </div>
+            </main>
+        </div>
 </template>
 
 <style>
