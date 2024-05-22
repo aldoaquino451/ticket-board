@@ -1,17 +1,44 @@
 <script setup>
-import { defineProps } from "vue";
-import { Inertia } from "@inertiajs/inertia";
+import { ref, defineProps } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
+import axios from "axios";
 
 const props = defineProps({
     tickets: Object,
     pagination: Object,
 });
 
-function navigate(page) {
-    Inertia.get(route("dashboard.tickets.index"), { page });
-}
+// Inizializza variabili reattive
+const ticketsArray = ref([]);
+const paginationArray = ref({
+    current_page: 1,
+    last_page: 1,
+    from: 1,
+    to: 1,
+    total: 0,
+});
+const currentPage = ref(1);
+
+// Funzione per la navigazione tra le pagine
+const navigate = async (page) => {
+    currentPage.value = page;
+    try {
+        const response = await axios.get(`/dashboard/tickets?page=${page}`);
+        console.log(currentPage);
+        console.log(response.data);
+
+        ticketsArray.value = response.data.tickets;
+        paginationArray.value = response.data.pagination;
+        currentPage.value = response.data.pagination.current_page;
+
+        console.log(response.data.pagination.current_page);
+    } catch (error) {
+        console.error("Error fetching page data:", error);
+    }
+};
+
+navigate(currentPage.value); // Carica i dati iniziali
 
 console.log(props);
 </script>
@@ -21,7 +48,9 @@ console.log(props);
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2
+                class="font-semibold text-xl text-gray-800 dark:text-white leading-tight"
+            >
                 Dashboard
             </h2>
         </template>
@@ -38,7 +67,7 @@ console.log(props);
                             <caption
                                 class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800"
                             >
-                                Our products
+                                Tickets List
                                 <p
                                     class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400"
                                 >
@@ -53,6 +82,7 @@ console.log(props);
                             >
                                 <tr>
                                     <th scope="col" class="px-6 py-3">Title</th>
+                                    <th scope="col" class="px-6 py-3">Code</th>
                                     <th scope="col" class="px-6 py-3">
                                         Status
                                     </th>
@@ -69,7 +99,7 @@ console.log(props);
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="ticket in tickets"
+                                    v-for="ticket in ticketsArray"
                                     class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600"
                                 >
                                     <th
@@ -78,6 +108,9 @@ console.log(props);
                                     >
                                         {{ ticket.title }}
                                     </th>
+                                    <td class="px-6 py-4">
+                                        {{ ticket.code }}
+                                    </td>
                                     <td class="px-6 py-4">
                                         {{ ticket.status }}
                                     </td>
@@ -111,13 +144,13 @@ console.log(props);
                                 <span
                                     class="font-semibold text-gray-900 dark:text-white"
                                     >{{
-                                        `${pagination.from}-${pagination.to}`
+                                        `${paginationArray.from}-${paginationArray.to}`
                                     }}</span
                                 >
                                 of
                                 <span
                                     class="font-semibold text-gray-900 dark:text-white"
-                                    >{{ pagination.total }}</span
+                                    >{{ paginationArray.total }}</span
                                 ></span
                             >
                             <ul
@@ -125,49 +158,46 @@ console.log(props);
                             >
                                 <li>
                                     <button
-                                        @click="
-                                            navigate(
-                                                pagination.current_page - 1
-                                            )
-                                        "
-                                        :disabled="
-                                            pagination.current_page === 1
-                                        "
-                                        class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                                        @click="navigate(currentPage - 1)"
+                                        class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                        :class="{
+                                            'opacity-50 cursor-not-allowed':
+                                                currentPage === 1,
+                                        }"
+                                        :disabled="currentPage === 1"
                                     >
                                         Previous
                                     </button>
                                 </li>
                                 <li
-                                    v-for="page in pagination.last_page"
+                                    v-for="page in paginationArray.last_page"
                                     :key="page"
                                 >
                                     <button
                                         @click="navigate(page)"
-                                        :class="[
-                                            'flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white',
-                                            {
-                                                'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:bg-gray-700 dark:text-white':
-                                                    page ===
-                                                    pagination.current_page,
-                                            },
-                                        ]"
+                                        class="flex items-center justify-center px-3 h-8 leading-tight border"
+                                        :class="
+                                            currentPage === page
+                                                ? 'text-white bg-blue-500 border-gray-300 hover:bg-blue-600  dark:bg-blue-900 dark:text-white dark:border-gray-600 dark:hover:bg-blue-950 '
+                                                : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-300'
+                                        "
                                     >
                                         {{ page }}
                                     </button>
                                 </li>
                                 <li>
                                     <button
-                                        @click="
-                                            navigate(
-                                                pagination.current_page + 1
-                                            )
-                                        "
+                                        @click="navigate(currentPage + 1)"
+                                        class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                        :class="{
+                                            'opacity-50 cursor-not-allowed':
+                                                currentPage ===
+                                                paginationArray.last_page,
+                                        }"
                                         :disabled="
-                                            pagination.current_page ===
-                                            pagination.last_page
+                                            currentPage ===
+                                            paginationArray.last_page
                                         "
-                                        class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         Next
                                     </button>
