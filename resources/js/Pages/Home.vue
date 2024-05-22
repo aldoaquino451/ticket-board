@@ -23,33 +23,33 @@ import { Head, Link } from "@inertiajs/vue3";
     <Head title="Home" />
 
     <div class="flex gap-3">
-      <Link
-        :href="route('dashboard')"
-        class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-        >Dashboard
-      </Link>
-      
-      <Link
-        :href="route('login')"
-        class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-        >
-        Log in
-      </Link>
+        <Link
+            :href="route('dashboard.tickets.index')"
+            class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+            >Dashboard
+        </Link>
 
-      <Link
-        :href="route('register')"
-        class="ms-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-        >Register
-      </Link>
-
-      <Link
-        :href="route('logout')"
-        class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-        method="post"
-        as="button"
+        <Link
+            :href="route('login')"
+            class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
         >
-        Log Out
-      </Link>
+            Log in
+        </Link>
+
+        <Link
+            :href="route('register')"
+            class="ms-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+            >Register
+        </Link>
+
+        <Link
+            :href="route('logout')"
+            class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+            method="post"
+            as="button"
+        >
+            Log Out
+        </Link>
     </div>
 </template>
 
