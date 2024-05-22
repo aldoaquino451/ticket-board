@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\TicketController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,24 +16,11 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\TicketController;
-
-Route::get('/', [HomeController::class, 'index'])->name('home');
-
-
-Route::get('/', function () {
-  return Inertia::render('Welcome', [
-    'canLogin' => Route::has('login'),
-    'canRegister' => Route::has('register'),
-    'laravelVersion' => Application::VERSION,
-    'phpVersion' => PHP_VERSION,
-  ]);
-});
 
 Route::get('/dashboard', function () {
   return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(function () {
   Route::resource('tickets', TicketController::class)->parameters(['tickets' => 'ticket:code']);
@@ -45,3 +33,15 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+Route::get('/', function () {
+  return Inertia::render(
+    'Home',
+    // [
+    //   'canLogin' => Route::has('login'),
+    //   'canRegister' => Route::has('register'),
+    //   'laravelVersion' => Application::VERSION,
+    //   'phpVersion' => PHP_VERSION,
+    // ]
+  );
+});
