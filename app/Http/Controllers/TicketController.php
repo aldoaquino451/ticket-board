@@ -13,7 +13,19 @@ class TicketController extends Controller
    */
   public function index()
   {
-    return Inertia::render('Dashboard');
+
+    $tickets = Ticket::with(['category', 'operator'])->paginate(15);
+
+    return Inertia::render('Tickets/Index', [
+      'tickets' => $tickets->items(),
+      'pagination' => [
+        'current_page' => $tickets->currentPage(),
+        'last_page' => $tickets->lastPage(),
+        'from' => $tickets->firstItem(),
+        'to' => $tickets->lastItem(),
+        'total' => $tickets->total(),
+      ]
+    ]);
   }
 
   /**
