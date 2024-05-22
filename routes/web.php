@@ -44,4 +44,4 @@ Route::get('/', function () {
     //   'phpVersion' => PHP_VERSION,
     // ]
   );
-});
+})->name('home');
