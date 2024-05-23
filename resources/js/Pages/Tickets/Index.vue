@@ -114,7 +114,16 @@ console.log(props);
                                         scope="row"
                                         class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                     >
-                                        {{ ticket.title }}
+                                        <a
+                                            :href="
+                                                route(
+                                                    'dashboard.tickets.show',
+                                                    ticket.code
+                                                )
+                                            "
+                                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                            >{{ ticket.title }}</a
+                                        >
                                     </th>
                                     <td class="px-6 py-4">
                                         {{ ticket.code }}
@@ -134,7 +143,12 @@ console.log(props);
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <a
-                                            href="#"
+                                            :href="
+                                                route(
+                                                    'dashboard.tickets.edit',
+                                                    ticket.code
+                                                )
+                                            "
                                             class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                                             >Edit</a
                                         >

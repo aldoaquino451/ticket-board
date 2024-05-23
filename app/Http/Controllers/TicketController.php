@@ -79,17 +79,27 @@ class TicketController extends Controller
       $random_operator->update(['is_available' => 0]);
 
       $validated_data['status'] = 'assigned';
+
+      $flash_message = [
+        'message' => 'Ticket created successfully and assigned to an operator.',
+        'class' => 'mb-4 font-medium text-sm text-green-600 dark:text-green-400'
+      ];
     } else {
 
       $validated_data['operator_id'] = null;
       $validated_data['status'] = 'queued';
+
+      $flash_message = [
+        'message' => 'Ticket created successfully but no operators are currently available. The ticket has been queued.',
+        'class' => 'mb-4 font-medium text-sm text-yellow-600 dark:text-yellow-400'
+      ];
     }
 
     $new_ticket = Ticket::create($validated_data);
+    $new_ticket->load('category', 'operator'); // Carica le relazioni
 
-    return Inertia::render('Tickets/Show', [
-      'ticket' => $new_ticket
-    ]);
+    return redirect()->route('dashboard.tickets.show', ['ticket' => $new_ticket->code])
+      ->with('flash', $flash_message);
   }
 
   /**
@@ -97,7 +107,14 @@ class TicketController extends Controller
    */
   public function show(Ticket $ticket)
   {
-    //
+    $ticket->load('category', 'operator');
+
+    $flash_message = session('flash', null);
+
+    return Inertia::render('Tickets/Show', [
+      'ticket' => $ticket,
+      'flash' => $flash_message,
+    ]);
   }
 
   /**
@@ -105,7 +122,12 @@ class TicketController extends Controller
    */
   public function edit(Ticket $ticket)
   {
-    //
+    $categories = Category::all();
+
+    return Inertia::render('Tickets/Edit', [
+      'ticket' => $ticket,
+      'categories' => $categories,
+    ]);
   }
 
   /**
