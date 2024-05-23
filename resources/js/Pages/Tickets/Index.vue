@@ -57,6 +57,14 @@ console.log(props);
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="flex justify-end mb-4">
+                    <a
+                        :href="route('dashboard.tickets.create')"
+                        class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500 active:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200 disabled:opacity-25 transition"
+                    >
+                        Create New Ticket
+                    </a>
+                </div>
                 <div class="overflow-hidden shadow-sm sm:rounded-lg">
                     <div
                         class="relative overflow-x-auto shadow-md sm:rounded-lg"
@@ -78,7 +86,7 @@ console.log(props);
                                 </p>
                             </caption>
                             <thead
-                                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+                                class="text-xs text-gray-900 dark:text-white uppercase bg-gray-200 dark:bg-gray-700"
                             >
                                 <tr>
                                     <th scope="col" class="px-6 py-3">Title</th>
@@ -135,7 +143,7 @@ console.log(props);
                             </tbody>
                         </table>
                         <nav
-                            class="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4"
+                            class="flex items-center flex-column flex-wrap md:flex-row justify-between p-4"
                             aria-label="Table navigation"
                         >
                             <span

@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTicketRequest;
+use App\Models\Category;
+use App\Models\Operator;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Faker\Factory as Faker;
+use Illuminate\Support\Collection;
 
 class TicketController extends Controller
 {
@@ -47,15 +52,44 @@ class TicketController extends Controller
    */
   public function create()
   {
-    //
+    $categories = Category::all();
+
+    return Inertia::render('Tickets/Create', [
+      'categories' => $categories
+    ]);
   }
 
   /**
    * Store a newly created resource in storage.
    */
-  public function store(Request $request)
+  public function store(StoreTicketRequest $request)
   {
-    //
+    $faker = Faker::create('it_IT');
+
+    // Creating code
+    $validated_data = $request->validated();
+    $validated_data['code'] = $faker->isbn10();
+
+    $available_operators = Operator::where('is_available', true)->get();
+
+    if ($available_operators->count() > 0) {
+
+      $random_operator = $faker->randomElement($available_operators);
+      $validated_data['operator_id'] = $random_operator->id;
+      $random_operator->update(['is_available' => 0]);
+
+      $validated_data['status'] = 'assigned';
+    } else {
+
+      $validated_data['operator_id'] = null;
+      $validated_data['status'] = 'queued';
+    }
+
+    $new_ticket = Ticket::create($validated_data);
+
+    return Inertia::render('Tickets/Show', [
+      'ticket' => $new_ticket
+    ]);
   }
 
   /**
