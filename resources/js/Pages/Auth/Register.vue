@@ -171,7 +171,7 @@ const submit = () => {
                 </Link>
 
                 <PrimaryButton
-                    class="ms-4 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600"
+                    class="ms-4"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
