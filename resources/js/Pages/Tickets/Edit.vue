@@ -4,24 +4,23 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import TextInput from "@/Components/TextInput.vue";
-import Textarea from "@/Components/Textarea.vue";
+import Datalist from "@/Components/Datalist.vue";
 import Select from "@/Components/Select.vue";
 
 const props = defineProps({
     ticket: Object,
-    categories: Array,
+    operators: Array,
+    statuses: Array,
     flash: Object,
 });
 
 const form = useForm({
-    title: props.ticket.title,
-    description: props.ticket.description,
-    category_id: props.ticket.category_id,
+    status: props.ticket.status,
+    operator_id: props.ticket.operator_id,
 });
 
 const submit = () => {
-    form.put(route("dashboard.tickets.update", props.ticket.id));
+    form.put(route("dashboard.tickets.update", props.ticket.code));
 };
 
 console.log(props.flash);
@@ -52,72 +51,50 @@ console.log(props.flash);
                         <form @submit.prevent="submit" class="p-6 space-y-6">
                             <div>
                                 <InputLabel
-                                    for="title"
-                                    value="Title"
-                                    class="text-gray-900 dark:text-gray-200"
-                                />
-
-                                <TextInput
-                                    id="title"
-                                    type="text"
-                                    class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
-                                    v-model="form.title"
-                                    required
-                                    autofocus
-                                    autocomplete="title"
-                                />
-
-                                <InputError
-                                    class="mt-2 text-red-600 dark:text-red-400"
-                                    :message="form.errors.title"
-                                />
-                            </div>
-
-                            <div>
-                                <InputLabel
-                                    for="description"
-                                    value="Description"
-                                    class="text-gray-900 dark:text-gray-200"
-                                />
-
-                                <Textarea
-                                    id="description"
-                                    class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
-                                    v-model:modelValue="form.description"
-                                    required
-                                    rows="5"
-                                />
-
-                                <InputError
-                                    class="mt-2 text-red-600 dark:text-red-400"
-                                    :message="form.errors.description"
-                                />
-                            </div>
-
-                            <div>
-                                <InputLabel
-                                    for="category_id"
-                                    value="Category"
+                                    for="status"
+                                    value="Status"
                                     class="text-gray-900 dark:text-gray-200"
                                 />
 
                                 <Select
-                                    id="category_id"
+                                    id="status"
                                     class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
-                                    v-model:modelValue="form.category_id"
-                                    :options="
-                                        categories.map((category) => ({
-                                            id: category.id,
-                                            name: category.name,
-                                        }))
-                                    "
-                                    placeholder="Select a category"
+                                    v-model:modelValue="form.status"
+                                    :options="props.statuses"
+                                    placeholder="Select a status"
                                     required
                                 />
 
                                 <InputError
                                     class="mt-2 text-red-600 dark:text-red-400"
-                                    :message="form.errors.category_id"
+                                    :message="form.errors.status"
+                                />
+                            </div>
+
+                            <div>
+                                <InputLabel
+                                    for="operator_id"
+                                    value="Operator"
+                                    class="text-gray-900 dark:text-gray-200"
+                                />
+
+                                <Datalist
+                                    id="operator_id"
+                                    class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
+                                    v-model="form.operator_id"
+                                    :options="
+                                        props.operators.map((op) => ({
+                                            id: op.id,
+                                            name: `${op.name} ${op.surname}`,
+                                        }))
+                                    "
+                                    placeholder="Select an operator"
+                                    required
+                                />
+
+                                <InputError
+                                    class="mt-2 text-red-600 dark:text-red-400"
+                                    :message="form.errors.operator_id"
                                 />
                             </div>
 

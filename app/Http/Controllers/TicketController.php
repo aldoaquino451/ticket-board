@@ -122,11 +122,21 @@ class TicketController extends Controller
    */
   public function edit(Ticket $ticket)
   {
-    $categories = Category::all();
+    $ticket->load('category', 'operator');
+
+    $statuses = [
+      ['id' => 'closed', 'name' => 'Closed'],
+      ['id' => 'queued', 'name' => 'Queued'],
+      ['id' => 'assigned', 'name' => 'Assigned'],
+      ['id' => 'in progress', 'name' => 'In Progress'],
+    ];
+
+    $operators = Operator::all();
 
     return Inertia::render('Tickets/Edit', [
       'ticket' => $ticket,
-      'categories' => $categories,
+      'operators' => $operators,
+      'statuses' => $statuses
     ]);
   }
 
