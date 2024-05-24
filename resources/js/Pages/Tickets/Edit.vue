@@ -52,6 +52,13 @@ console.log(props.flash);
                             Update the form below to edit the ticket.
                         </p>
                     </div>
+                    <div
+                        v-if="flash"
+                        class="px-4 py-5 sm:px-6 border-t border-gray-200 dark:border-gray-700"
+                        :class="flash.class"
+                    >
+                        {{ flash.message }}
+                    </div>
                     <div class="border-t border-gray-200 dark:border-gray-700">
                         <!-- Informazioni del Ticket -->
                         <div class="px-4 py-5 sm:px-6">
@@ -66,6 +73,18 @@ console.log(props.flash);
                                 <strong>Code:</strong> {{ props.ticket.code }}
                                 <br />
                                 <strong>Title:</strong> {{ props.ticket.title }}
+                                <br />
+                                <span class="capitalize"
+                                    ><strong>Status:</strong>
+                                    {{ props.ticket.status }}
+                                </span>
+                                <br />
+                                <strong>Operator:</strong>
+                                {{
+                                    props.ticket.operator
+                                        ? `${props.ticket.operator?.name} ${props.ticket.operator?.surname}`
+                                        : "N/A"
+                                }}
                                 <br
                                     v-if="props.ticket.status === 'in progress'"
                                 />
@@ -127,7 +146,11 @@ console.log(props.flash);
                                             }))
                                         "
                                         placeholder="Select an operator"
-                                        :operatorName="`${props.ticket.operator?.name} ${props.ticket.operator?.surname}`"
+                                        :operatorName="
+                                            props.ticket.operator
+                                                ? `${props.ticket.operator?.name} ${props.ticket.operator?.surname}`
+                                                : 'N/A'
+                                        "
                                         required
                                     />
                                     <InputError
@@ -147,11 +170,16 @@ console.log(props.flash);
                                         :isDisabled="
                                             form.processing ||
                                             form.operator_id == 0 ||
+                                            form.operator_id == 'pippo' ||
                                             (form.status !== 'assigned' &&
                                                 form.status ===
                                                     props.ticket.status) ||
-                                            form.operator_id ===
-                                                props.ticket.operator_id
+                                            (form.status === 'assigned' &&
+                                                form.status ===
+                                                    props.ticket.status &&
+                                                form.operator_id !== null &&
+                                                form.operator_id ===
+                                                    props.ticket.operator_id)
                                         "
                                     >
                                         Update Ticket

@@ -133,10 +133,13 @@ class TicketController extends Controller
 
     $operators = Operator::all();
 
+    $flash_message = session('flash', null);
+
     return Inertia::render('Tickets/Edit', [
       'ticket' => $ticket,
       'operators' => $operators,
-      'statuses' => $statuses
+      'statuses' => $statuses,
+      'flash' => $flash_message,
     ]);
   }
 
@@ -147,16 +150,41 @@ class TicketController extends Controller
   {
     $validated_data = $request->validated();
 
-    if ($request->has(['operator_id'])) {
+    if ($validated_data['operator_id'] !== null) {
 
-      $ticket->update(['status' => $validated_data['status']]);
+      $ticket->update($validated_data);
 
-      $ticket->update(['operator_id' => $validated_data['operator_id']]);
+      // $ticket->update(['status' => $validated_data['status']]);
+
+      // dd($ticket);
+
+      $flash_message = [
+        'message' => 'Ticket edited successfully and assigned to an operator.',
+        'class' => 'mb-4 font-medium text-sm text-green-600 dark:text-green-400'
+      ];
     } else {
       if ($validated_data['status'] == 'queued') {
-        dd('ciao');
+
+        $ticket->update(['status' => $validated_data['status']]);
+
+        $ticket->update(['operator_id' => null]);
+
+        $flash_message = [
+          'message' => 'Ticket edited successfully and has been queued.',
+          'class' => 'mb-4 font-medium text-sm text-yellow-600 dark:text-yellow-400'
+        ];
+      } else if ($validated_data['status'] == 'closed') {
+        $ticket->update(['status' => $validated_data['status']]);
+
+        $flash_message = [
+          'message' => 'Ticket edited successfully and has been closed.',
+          'class' => 'mb-4 font-medium text-sm text-red-600 dark:text-red-400'
+        ];
       }
     }
+
+    return redirect()->route('dashboard.tickets.edit', ['ticket' => $ticket->code])
+      ->with('flash', $flash_message);
   }
 
   /**

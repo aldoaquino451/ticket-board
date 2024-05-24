@@ -47,7 +47,21 @@ watch(
             emit("update:modelValue", null);
             displayValue.value = props.operatorName;
         } else {
-            emit("update:modelValue", props.operatorId);
+            if (props.operatorId === null) {
+                emit("update:modelValue", "pippo");
+            } else {
+                emit("update:modelValue", props.operatorId);
+            }
+        }
+    },
+    { immediate: true }
+);
+
+watch(
+    () => props.operatorName,
+    (operatorName) => {
+        if (operatorName === "N/A") {
+            displayValue.value = "N/A";
         }
     },
     { immediate: true }
