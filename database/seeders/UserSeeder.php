@@ -19,6 +19,14 @@ class UserSeeder extends Seeder
   {
     $faker = Faker::create('it_IT');
 
+    User::create([
+      'name' => 'admin',
+      'surname' => 'admin',
+      'username' => 'admin',
+      'email' => 'admin@admin.com',
+      'password' => '123123123',
+    ]);
+
     for ($i = 0; $i < 10; $i++) {
 
       $name = $faker->firstName();

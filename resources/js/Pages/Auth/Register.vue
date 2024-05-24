@@ -29,101 +29,135 @@ const submit = () => {
         <form @submit.prevent="submit">
             <div class="lg:flex lg:gap-4">
                 <div class="flex-1">
-                    <InputLabel for="name" value="Name" />
+                    <InputLabel
+                        for="name"
+                        value="Name"
+                        class="text-gray-900 dark:text-gray-200"
+                    />
 
                     <TextInput
                         id="name"
                         type="text"
-                        class="mt-1 block w-full"
+                        class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
                         v-model="form.name"
                         required
                         autofocus
                         autocomplete="name"
                     />
 
-                    <InputError class="mt-2" :message="form.errors.name" />
+                    <InputError
+                        class="mt-2 text-red-600 dark:text-red-400"
+                        :message="form.errors.name"
+                    />
                 </div>
 
                 <div class="flex-1 mt-4 lg:mt-0">
-                    <InputLabel for="surname" value="Surname" />
+                    <InputLabel
+                        for="surname"
+                        value="Surname"
+                        class="text-gray-900 dark:text-gray-200"
+                    />
 
                     <TextInput
                         id="surname"
                         type="text"
-                        class="mt-1 block w-full"
+                        class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
                         v-model="form.surname"
                         required
-                        autofocus
                         autocomplete="surname"
                     />
 
-                    <InputError class="mt-2" :message="form.errors.surname" />
+                    <InputError
+                        class="mt-2 text-red-600 dark:text-red-400"
+                        :message="form.errors.surname"
+                    />
                 </div>
             </div>
 
             <div class="mt-4">
-                <InputLabel for="username" value="Username" />
+                <InputLabel
+                    for="username"
+                    value="Username"
+                    class="text-gray-900 dark:text-gray-200"
+                />
 
                 <TextInput
                     id="username"
                     type="text"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
                     v-model="form.username"
                     required
-                    autofocus
                     autocomplete="username"
                 />
 
-                <InputError class="mt-2" :message="form.errors.username" />
+                <InputError
+                    class="mt-2 text-red-600 dark:text-red-400"
+                    :message="form.errors.username"
+                />
             </div>
 
             <div class="mt-4">
-                <InputLabel for="email" value="Email" />
+                <InputLabel
+                    for="email"
+                    value="Email"
+                    class="text-gray-900 dark:text-gray-200"
+                />
 
                 <TextInput
                     id="email"
                     type="email"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
                     v-model="form.email"
                     required
                     autocomplete="username"
                 />
 
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError
+                    class="mt-2 text-red-600 dark:text-red-400"
+                    :message="form.errors.email"
+                />
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+                <InputLabel
+                    for="password"
+                    value="Password"
+                    class="text-gray-900 dark:text-gray-200"
+                />
 
                 <TextInput
                     id="password"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
                     v-model="form.password"
                     required
                     autocomplete="new-password"
                 />
 
-                <InputError class="mt-2" :message="form.errors.password" />
+                <InputError
+                    class="mt-2 text-red-600 dark:text-red-400"
+                    :message="form.errors.password"
+                />
             </div>
 
             <div class="mt-4">
                 <InputLabel
                     for="password_confirmation"
                     value="Confirm Password"
+                    class="text-gray-900 dark:text-gray-200"
                 />
 
                 <TextInput
                     id="password_confirmation"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
                     v-model="form.password_confirmation"
                     required
                     autocomplete="new-password"
                 />
 
                 <InputError
-                    class="mt-2"
+                    class="mt-2 text-red-600 dark:text-red-400"
                     :message="form.errors.password_confirmation"
                 />
             </div>
@@ -131,7 +165,7 @@ const submit = () => {
             <div class="flex items-center justify-end mt-4">
                 <Link
                     :href="route('login')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-300"
                 >
                     Already registered?
                 </Link>
