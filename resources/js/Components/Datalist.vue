@@ -2,14 +2,12 @@
     <div>
         <input
             :id="id"
-            :class="[
-                'mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md',
-                className,
-            ]"
+            :class="className"
             :value="displayValue"
             @input="onInput"
             list="datalist-options"
             :placeholder="placeholder"
+            :disabled="isDisabled"
         />
         <datalist id="datalist-options">
             <option
@@ -25,7 +23,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 
 const props = defineProps({
     id: String,
@@ -33,24 +31,44 @@ const props = defineProps({
     className: String,
     options: Array,
     placeholder: String,
+    isDisabled: Boolean,
+    operatorName: String,
+    operatorId: Number,
 });
 
 const emit = defineEmits(["update:modelValue"]);
 
 const displayValue = ref("");
 
-const updateDisplayValue = (value) => {
-    const option = props.options.find((option) => option.id == value);
-    displayValue.value = option ? option.name : "";
-};
-
 watch(
-    () => props.modelValue,
-    (newValue) => {
-        updateDisplayValue(newValue);
+    () => props.isDisabled,
+    (isDisabled) => {
+        if (isDisabled) {
+            emit("update:modelValue", null);
+            displayValue.value = props.operatorName;
+        } else {
+            emit("update:modelValue", props.operatorId);
+        }
     },
     { immediate: true }
 );
+
+onMounted(() => {
+    displayValue.value = props.operatorName;
+});
+
+// const updateDisplayValue = (value) => {
+//     const option = props.options.find((option) => option.id == value);
+//     displayValue.value = option ? option.name : "";
+// };
+
+// watch(
+//     () => props.modelValue,
+//     (newValue) => {
+//         updateDisplayValue(newValue);
+//     },
+//     { immediate: true }
+// );
 
 const onInput = (event) => {
     const value = event.target.value;
@@ -58,15 +76,15 @@ const onInput = (event) => {
     if (option) {
         emit("update:modelValue", option.id);
     } else {
+        emit("update:modelValue", 0);
         // Cerca la prima corrispondenza parziale
-        const partialMatch = props.options.find((option) =>
-            option.name.toLowerCase().startsWith(value.toLowerCase())
-        );
-        if (partialMatch) {
-            emit("update:modelValue", partialMatch.id);
-        } else {
-            emit("update:modelValue", null);
-        }
+        // const partialMatch = props.options.find((option) =>
+        //     option.name.toLowerCase().startsWith(value.toLowerCase())
+        // );
+        // if (partialMatch) {
+        //     emit("update:modelValue", partialMatch.id);
+        // } else {
+        // }
     }
     displayValue.value = value;
 };

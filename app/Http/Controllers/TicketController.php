@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTicketRequest;
+use App\Http\Requests\UpdateTicketRequest;
 use App\Models\Category;
 use App\Models\Operator;
 use App\Models\Ticket;
@@ -128,7 +129,6 @@ class TicketController extends Controller
       ['id' => 'closed', 'name' => 'Closed'],
       ['id' => 'queued', 'name' => 'Queued'],
       ['id' => 'assigned', 'name' => 'Assigned'],
-      ['id' => 'in progress', 'name' => 'In Progress'],
     ];
 
     $operators = Operator::all();
@@ -143,9 +143,20 @@ class TicketController extends Controller
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, Ticket $ticket)
+  public function update(UpdateTicketRequest $request, Ticket $ticket)
   {
-    //
+    $validated_data = $request->validated();
+
+    if ($request->has(['operator_id'])) {
+
+      $ticket->update(['status' => $validated_data['status']]);
+
+      $ticket->update(['operator_id' => $validated_data['operator_id']]);
+    } else {
+      if ($validated_data['status'] == 'queued') {
+        dd('ciao');
+      }
+    }
   }
 
   /**
