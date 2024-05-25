@@ -12,55 +12,46 @@ const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-    <Head title="Home" />
+  <Head title="Home" />
 
-        <div class="min-h-screen bg-gray-100">
-           <!-- Header -->
-            <nav class="bg-white border-b border-gray-100">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex">
-                            <!-- Logo -->
-                            <div class="shrink-0 flex items-center">
-                                <Link :href="route('home')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    />
-                                </Link>
-                            </div>
+  <div class="min-h-screen bg-gray-100">
 
-                            <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('dashboard.tickets.index')">
-                                  Dashboard
-                                </NavLink>
-   
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-            <div class="bg-white max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-              <!-- <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2> -->
-              <div class="flex gap-5">
-              <a :href="route('login')" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out" href="http://127.0.0.1:8000/dashboard/tickets"> Login </a>
-              <a :href="route('register')" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out" href="http://127.0.0.1:8000/dashboard/tickets"> Sign up </a>
-
-              </div>
+    <!-- header with logo -->
+    <nav class="bg-white border-b border-gray-100">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex">
+            <div class="shrink-0 flex items-center">
+              <Link :href="route('home')">
+                <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800"/>
+              </Link>
             </div>
-
-            <!-- Page Content -->
-            <main>                
-              <div class="py-12">
-                  <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                          <p class="p-6 text-gray-900">Questa è la Guest Homepage del sito!</p>
-                      </div>
-                  </div>
-              </div>
-            </main>
+          </div>
         </div>
+      </div>
+    </nav>
+
+    <!-- buttons login and register -->
+    <div class="bg-white">
+      <div class="bg-white max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class="flex gap-5">
+          <NavLink :href="route('login')">Login</NavLink>
+          <NavLink :href="route('register')">Register</NavLink>
+        </div>
+      </div>
+    </div>
+
+    <!-- main page Content -->
+    <main>                
+      <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <p class="p-6 text-gray-900">Questa è la Guest Homepage del sito!</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
 </template>
 
 <style>
