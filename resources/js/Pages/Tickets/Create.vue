@@ -26,8 +26,9 @@ const submit = () => {
 </script>
 
 <template>
+    <Head title="Nuovo Ticket" />
+
     <AuthenticatedLayout>
-        <Head title="Create Ticket" />
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -38,12 +39,12 @@ const submit = () => {
                         <h3
                             class="text-lg leading-6 font-medium text-gray-900 dark:text-white"
                         >
-                            Create New Ticket
+                            Crea un nuovo ticket
                         </h3>
                         <p
                             class="mt-1 text-sm text-gray-600 dark:text-gray-400"
                         >
-                            Fill out the form below to create a new ticket.
+                            Riempi il form sottostante per creare un nuovo ticket.
                         </p>
                     </div>
                     <div class="border-t border-gray-200 dark:border-gray-700">
@@ -51,7 +52,7 @@ const submit = () => {
                             <div>
                                 <InputLabel
                                     for="title"
-                                    value="Title"
+                                    value="Titolo"
                                     class="text-gray-900 dark:text-gray-200"
                                 />
 
@@ -74,7 +75,7 @@ const submit = () => {
                             <div>
                                 <InputLabel
                                     for="description"
-                                    value="Description"
+                                    value="Descrizione"
                                     class="text-gray-900 dark:text-gray-200"
                                 />
 
@@ -95,7 +96,7 @@ const submit = () => {
                             <div>
                                 <InputLabel
                                     for="category_id"
-                                    value="Category"
+                                    value="Categoria"
                                     class="text-gray-900 dark:text-gray-200"
                                 />
 
@@ -104,7 +105,7 @@ const submit = () => {
                                     class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
                                     v-model:modelValue="form.category_id"
                                     :options="props.categories"
-                                    placeholder="Select a category"
+                                    placeholder="Seleziona una categoria..."
                                     required
                                 />
 
@@ -119,7 +120,7 @@ const submit = () => {
                                     :class="{ 'opacity-25': form.processing }"
                                     :disabled="form.processing"
                                 >
-                                    Create Ticket
+                                    Crea
                                 </PrimaryButton>
                             </div>
                         </form>

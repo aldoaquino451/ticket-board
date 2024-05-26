@@ -32,10 +32,11 @@ console.log(props.flash);
 </script>
 
 <template>
+    <Head title="Modifica Ticket" />
+    
     <AuthenticatedLayout>
-        <Head title="Edit Ticket" />
 
-        <div class="py-12">
+        <div class="py-0 sm:py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div
                     class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg"
@@ -44,20 +45,20 @@ console.log(props.flash);
                         <h3
                             class="text-lg leading-6 font-medium text-gray-900 dark:text-white"
                         >
-                            Edit Ticket
+                            Modifica il Ticket
                         </h3>
                         <p
                             class="mt-1 text-sm text-gray-600 dark:text-gray-400"
                         >
-                            Update the form below to edit the ticket.
+                            Inserisci i dati nel form per aggiornare il ticket.
                         </p>
                     </div>
                     <div
-                        v-if="flash"
-                        class="px-4 py-5 sm:px-6 border-t border-gray-200 dark:border-gray-700"
-                        :class="flash.class"
+                      v-if="flash"
+                      class="px-4 py-5 sm:px-6 font-medium text-sm border-t border-gray-200 dark:border-gray-700"
+                      :class="flash ? flash.class : ''"
                     >
-                        {{ flash.message }}
+                      {{ flash.message }}
                     </div>
                     <div class="border-t border-gray-200 dark:border-gray-700">
                         <!-- Informazioni del Ticket -->
@@ -65,48 +66,33 @@ console.log(props.flash);
                             <h4
                                 class="text-md leading-5 font-medium text-gray-900 dark:text-white"
                             >
-                                Ticket Information
+                                Dettagli del Ticket
                             </h4>
                             <p
                                 class="mt-1 text-sm text-gray-600 dark:text-gray-400"
                             >
-                                <strong>Code:</strong> {{ props.ticket.code }}
+                                <strong>Codice: </strong> {{ props.ticket.code }}
                                 <br />
-                                <strong>Title:</strong> {{ props.ticket.title }}
+                                <strong>Titolo: </strong> {{ props.ticket.title }}
                                 <br />
-                                <span class="capitalize"
-                                    ><strong>Status:</strong>
-                                    {{ props.ticket.status }}
-                                </span>
+                                <strong>Stato: </strong> {{ props.ticket.status }}
                                 <br />
-                                <strong>Operator:</strong>
-                                {{
-                                    props.ticket.operator
-                                        ? `${props.ticket.operator?.name} ${props.ticket.operator?.surname}`
-                                        : "N/A"
-                                }}
-                                <br
-                                    v-if="props.ticket.status === 'in progress'"
-                                />
-                                <span
-                                    v-if="props.ticket.status === 'in progress'"
-                                    class="capitalize"
-                                    ><strong>Status:</strong>
-                                    {{ props.ticket.status }}</span
-                                >
+                                <strong>Operatore: </strong>
+                                <span v-if="props.ticket.operator">{{ `${props.ticket.operator?.name} ${props.ticket.operator?.surname}` }}</span>
+                                <span v-else>N/A</span>
                             </p>
                         </div>
                         <div
-                            class="border-t border-gray-200 dark:border-gray-700"
+                            class="px-4 py-5 sm:px-6 border-t border-gray-200 dark:border-gray-700"
                         >
                             <form
                                 @submit.prevent="submit"
-                                class="p-6 space-y-6 lg:space-y-0 lg:flex flex-wrap"
+                                class="space-y-6 lg:space-y-0 lg:flex flex-wrap"
                             >
                                 <div class="lg:w-1/2 lg:pr-2">
                                     <InputLabel
                                         for="status"
-                                        value="Status"
+                                        value="Stato"
                                         class="text-gray-900 dark:text-gray-200"
                                     />
                                     <Select
@@ -114,7 +100,7 @@ console.log(props.flash);
                                         class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
                                         v-model:modelValue="form.status"
                                         :options="props.statuses"
-                                        placeholder="Select a status"
+                                        placeholder="Seleziona uno stato..."
                                         required
                                     />
                                     <InputError
@@ -126,7 +112,7 @@ console.log(props.flash);
                                 <div class="lg:w-1/2 lg:pl-2">
                                     <InputLabel
                                         for="operator_id"
-                                        value="Operator"
+                                        value="Operatore"
                                         class="text-gray-900 dark:text-gray-200"
                                     />
                                     <Datalist
@@ -182,7 +168,7 @@ console.log(props.flash);
                                                     props.ticket.operator_id)
                                         "
                                     >
-                                        Update Ticket
+                                        Aggiorna
                                     </PrimaryButton>
                                 </div>
                             </form>

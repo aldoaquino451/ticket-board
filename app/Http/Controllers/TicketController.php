@@ -75,8 +75,8 @@ class TicketController extends Controller
       $validated_data['status'] = 'assigned';
 
       $flash_message = [
-        'message' => 'Ticket created successfully and assigned to an operator.',
-        'class' => 'mb-4 font-medium text-sm text-green-600 dark:text-green-400'
+        'message' => 'Il ticket è stato creato con successo e assegnato a un operatore.',
+        'class' => 'font-medium text-sm text-green-600 dark:text-green-400'
       ];
     } else {
 
@@ -84,8 +84,8 @@ class TicketController extends Controller
       $validated_data['status'] = 'queued';
 
       $flash_message = [
-        'message' => 'Ticket created successfully but no operators are currently available. The ticket has been queued.',
-        'class' => 'mb-4 font-medium text-sm text-yellow-600 dark:text-yellow-400'
+        'message' => 'Il ticket è stato creato con successo ma nessun operatore è attualmente disponibile. Il ticket è stato messo in coda',
+        'class' => 'font-medium text-sm text-yellow-600 dark:text-yellow-400'
       ];
     }
 
@@ -119,9 +119,10 @@ class TicketController extends Controller
     $ticket->load('category', 'operator');
 
     $statuses = [
-      ['id' => 'closed', 'name' => 'Closed'],
-      ['id' => 'queued', 'name' => 'Queued'],
-      ['id' => 'assigned', 'name' => 'Assigned'],
+      ['id' => 'queued', 'name' => 'In coda'],
+      ['id' => 'assigned', 'name' => 'Assegnato'],
+      ['id' => 'in progress', 'name' => 'In lavorazione'],
+      ['id' => 'closed', 'name' => 'Chiuso'],
     ];
 
     $operators = Operator::all();
@@ -142,41 +143,31 @@ class TicketController extends Controller
   public function update(UpdateTicketRequest $request, Ticket $ticket)
   {
     $validated_data = $request->validated();
+    $ticket->update($validated_data);
 
-    if ($validated_data['operator_id'] !== null) {
-
-      $ticket->update($validated_data);
-
-      // $ticket->update(['status' => $validated_data['status']]);
-
-      // dd($ticket);
-
-      $flash_message = [
-        'message' => 'Ticket edited successfully and assigned to an operator.',
-        'class' => 'mb-4 font-medium text-sm text-green-600 dark:text-green-400'
-      ];
-    } else {
-      if ($validated_data['status'] == 'queued') {
-
-        $ticket->update(['status' => $validated_data['status']]);
-
-        $ticket->update(['operator_id' => null]);
-
+    switch ($validated_data['status']) {
+      case 'queued':
         $flash_message = [
-          'message' => 'Ticket edited successfully and has been queued.',
-          'class' => 'mb-4 font-medium text-sm text-yellow-600 dark:text-yellow-400'
+          'message' => 'Il ticket è stato modificato con successo ed è stato messo in coda.',
+          'class' => 'text-amber-600 dark:text-amber-400'
         ];
-      } else if ($validated_data['status'] == 'closed') {
-        $ticket->update(['status' => $validated_data['status']]);
-
+        break;
+      case 'assigned':
         $flash_message = [
-          'message' => 'Ticket edited successfully and has been closed.',
-          'class' => 'mb-4 font-medium text-sm text-red-600 dark:text-red-400'
+          'message' => 'Il ticket è stato modificato con successo e assegnato a un operatore.',
+          'class' => 'text-green-600 dark:text-green-400'
         ];
-      }
+        break;
+      case 'closed':
+        $flash_message = [
+          'message' => 'Il ticket è stato modificato con successo ed è stato chiuso.',
+          'class' => 'text-red-600 dark:text-red-400'
+        ];
+        break;
     }
 
-    return redirect()->route('dashboard.tickets.edit', ['ticket' => $ticket->code])
+    return redirect()
+      ->route('dashboard.tickets.edit', ['ticket' => $ticket->code])
       ->with('flash', $flash_message);
   }
 
