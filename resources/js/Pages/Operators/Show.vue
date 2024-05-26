@@ -6,8 +6,7 @@ import { Link } from "@inertiajs/vue3";
 // import axios from "axios";
 
 const props = defineProps({
-  available: Object,
-  notAvailable: Object,
+  ticket: Object,
 });
 
 console.log(props);
@@ -15,38 +14,20 @@ console.log(props);
 
 
 <template>
-  <Head title="Operatori" />
+  <Head title="Operatore" />
 
   <AuthenticatedLayout>
     <!-- page name -->
     <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">Operatori</h2>
+      <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">Dettagli Operatore</h2>
     </template>
 
-    <div class="py-12">
-      <div class="flex gap-x-32 max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div>
-          <p class="text-green-400">Disponibili</p>
-          <ul>
-            <li class="text-white" v-for="operator in props.available">
-              <Link :href="route('dashboard.operators.show', operator.slug)">
-                {{ operator.name }} {{ operator.surname }}
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <p class="text-red-400">Non disponibili</p>
-          <ul>
-            <li class="text-white" v-for="operator in props.notAvailable">
-              <Link :href="route('dashboard.operators.show', operator.slug)">
-                {{ operator.name }} {{ operator.surname }}
-              </Link>
-            </li>          
-          </ul>
-        </div>
+
+    <div class="py-12 text-gray-300">
+      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <p v-for="(value, key) in props.ticket">{{ key }} : {{ value }}</p>
       </div>
-    </div>
+    </div> 
   </AuthenticatedLayout>
 
 </template>

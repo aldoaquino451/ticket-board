@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Operator;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -12,7 +14,10 @@ class OperatorController extends Controller
    */
   public function index()
   {
-    return Inertia::render('Operators/Index');
+    $available = Operator::where('is_available', 1)->get();
+    $notAvailable = Operator::where('is_available', 0)->get();
+
+    return Inertia::render('Operators/Index', ['available' => $available, 'notAvailable' => $notAvailable]);
   }
 
   /**
@@ -28,15 +33,17 @@ class OperatorController extends Controller
    */
   public function store(Request $request)
   {
-    //
+    // 
   }
 
   /**
    * Display the specified resource.
    */
-  public function show(string $id)
+  public function show(Operator $operator)
   {
-    //
+    $ticket = Ticket::where('operator_id', $operator->id)->whereIn('status', ['assigned', 'in progress'])->first();
+
+    return Inertia::render('Operators/Show', ['ticket' => $ticket]);
   }
 
   /**
