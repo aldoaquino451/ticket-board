@@ -42,7 +42,16 @@ const showingNavigationDropdown = ref(false);
                                     route().current('dashboard.tickets.index')
                                 "
                             >
-                                Dashboard
+                                Tickets
+                            </NavLink>
+                            <NavLink
+                                class="dark:text-gray-200"
+                                :href="route('dashboard.operators.index')"
+                                :active="
+                                    route().current('dashboard.operators.index')
+                                "
+                            >
+                                Operatori
                             </NavLink>
                         </div>
                     </div>
@@ -76,7 +85,7 @@ const showingNavigationDropdown = ref(false);
 
                                 <template #content>
                                     <DropdownLink :href="route('profile.edit')">
-                                        Profile
+                                        Profilo
                                     </DropdownLink>
                                     <DropdownLink
                                         :href="route('logout')"
@@ -146,7 +155,13 @@ const showingNavigationDropdown = ref(false);
                         :href="route('dashboard.tickets.index')"
                         :active="route().current('dashboard.tickets.index')"
                     >
-                        Dashboard
+                        Tickets
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink
+                        :href="route('dashboard.operators.index')"
+                        :active="route().current('dashboard.operators.index')"
+                    >
+                        Operatori
                     </ResponsiveNavLink>
                 </div>
 
