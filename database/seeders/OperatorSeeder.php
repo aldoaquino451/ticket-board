@@ -20,11 +20,13 @@ class OperatorSeeder extends Seeder
 
       $name = $faker->firstName();
       $surname = $faker->lastName();
+      $slug = lcfirst($name) . '-' . lcfirst($surname);
       $email = lcfirst($name) . '.' . lcfirst($surname) . '@gmail.com';
 
       Operator::create([
         'name' => $name,
         'surname' => $surname,
+        'slug' => $slug,
         'email' => $email,
         'is_available' => $faker->boolean(),
       ]);

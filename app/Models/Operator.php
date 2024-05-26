@@ -8,17 +8,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Operator extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'surname',
-        'email',
-        'is_available'
-    ];
+  protected $fillable = [
+    'name',
+    'surname',
+    'slug',
+    'email',
+    'is_available'
+  ];
 
-    public function notes(): HasMany
-    {
-        return $this->hasMany(Ticket::class);
-    }
+  public function notes(): HasMany
+  {
+    return $this->hasMany(Ticket::class);
+  }
 }
