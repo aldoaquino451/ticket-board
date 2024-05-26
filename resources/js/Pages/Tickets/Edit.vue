@@ -33,9 +33,8 @@ console.log(props.flash);
 
 <template>
     <Head title="Modifica Ticket" />
-    
-    <AuthenticatedLayout>
 
+    <AuthenticatedLayout>
         <div class="py-0 sm:py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div
@@ -54,11 +53,11 @@ console.log(props.flash);
                         </p>
                     </div>
                     <div
-                      v-if="flash"
-                      class="px-4 py-5 sm:px-6 font-medium text-sm border-t border-gray-200 dark:border-gray-700"
-                      :class="flash ? flash.class : ''"
+                        v-if="flash"
+                        class="px-4 py-5 sm:px-6 font-medium text-sm border-t border-gray-200 dark:border-gray-700"
+                        :class="flash ? flash.class : ''"
                     >
-                      {{ flash.message }}
+                        {{ flash.message }}
                     </div>
                     <div class="border-t border-gray-200 dark:border-gray-700">
                         <!-- Informazioni del Ticket -->
@@ -71,14 +70,21 @@ console.log(props.flash);
                             <p
                                 class="mt-1 text-sm text-gray-600 dark:text-gray-400"
                             >
-                                <strong>Codice: </strong> {{ props.ticket.code }}
+                                <strong>Codice: </strong>
+                                {{ props.ticket.code }}
                                 <br />
-                                <strong>Titolo: </strong> {{ props.ticket.title }}
+                                <strong>Titolo: </strong>
+                                {{ props.ticket.title }}
                                 <br />
-                                <strong>Stato: </strong> {{ props.ticket.status }}
+                                <span class="capitalize">
+                                    <strong>Status:</strong>
+                                    {{ props.ticket.status }}
+                                </span>
                                 <br />
                                 <strong>Operatore: </strong>
-                                <span v-if="props.ticket.operator">{{ `${props.ticket.operator?.name} ${props.ticket.operator?.surname}` }}</span>
+                                <span v-if="props.ticket.operator">{{
+                                    `${props.ticket.operator?.name} ${props.ticket.operator?.surname}`
+                                }}</span>
                                 <span v-else>N/A</span>
                             </p>
                         </div>
@@ -165,7 +171,10 @@ console.log(props.flash);
                                                     props.ticket.status &&
                                                 form.operator_id !== null &&
                                                 form.operator_id ===
-                                                    props.ticket.operator_id)
+                                                    props.ticket.operator_id) ||
+                                            (form.status == 'closed' &&
+                                                props.ticket.operator_id ==
+                                                    null)
                                         "
                                     >
                                         Aggiorna
