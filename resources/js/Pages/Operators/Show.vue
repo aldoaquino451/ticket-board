@@ -1,15 +1,39 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head } from "@inertiajs/vue3";
-import { Link } from "@inertiajs/vue3";
-// import { ref, defineProps } from "vue";
+import { Head, useForm } from "@inertiajs/vue3";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import { ref } from "vue";
+
 // import axios from "axios";
+const new_note = ref('');
 
 const props = defineProps({
   ticket: Object,
+  slug: String,
+  notes: Array
 });
 
-console.log(props);
+const form = useForm({
+  status: props.ticket.status == 'assigned' ? 'in progress' : 'closed',
+  ticket: props.ticket,
+});
+
+const formNote = useForm({
+  new_note: new_note,
+});
+
+const submit = () => {
+  form.put(route("dashboard.operators.update", props.slug));
+};
+
+const addNote = () => {
+  console.log(formNote);   
+  form.post(route("dashboard.notes.store"));
+};
+
+
+console.log(props.ticket.status);
+console.log(props.notes);
 </script>
 
 
@@ -17,15 +41,39 @@ console.log(props);
   <Head title="Operatore" />
 
   <AuthenticatedLayout>
-    <!-- page name -->
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">Dettagli Operatore</h2>
     </template>
 
-
     <div class="py-12 text-gray-300">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <p v-for="(value, key) in props.ticket">{{ key }} : {{ value }}</p>
+      
+        <form @submit.prevent="submit" class="space-y-6 lg:space-y-0 lg:flex flex-wrap">
+          <PrimaryButton class="lg:mt-6" >
+              {{ props.ticket.status == 'assigned' ? 'In progress' : 'Closed'}}
+          </PrimaryButton>
+        </form>
+
+        <div class="mt-8">
+          <p v-for="(value, key) in props.ticket">{{ key }} : {{ value }}</p>
+        </div>
+
+        <!-- 
+        <div class="mt-8">
+          <form @submit.prevent="addNote" class="space-y-6 lg:space-y-0 lg:flex flex-wrap">
+            <label for="content" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Aggiungi una Nota</label>
+            <input  type="text" id="content" name="content" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Nota..." required />
+          </form>
+        </div>       
+        -->
+
+        <div class="mt-8 ">
+          <p>Note</p>
+          <ul class="ps-6 list-disc">
+            <li v-for="note in notes">{{ note.content }}</li>
+          </ul>
+        </div>
+
       </div>
     </div> 
   </AuthenticatedLayout>
@@ -50,54 +98,3 @@ console.log(props);
 
 
 
-
-
-
-
-
-
-<!-- 
-<script setup>
-import { ref, reactive } from '@vue/reactivity';
-import { Head } from '@inertiajs/vue3';
-import axios from 'axios';
-
-// Definizione delle variabili reactive
-const isLoading = ref(true);
-const error = ref(null);
-const users = ref([]);
-
-// Fetch dei dati dall'API
-async function fetchData() {
-  try {
-    const res = await axios.get('https://jsonplaceholder.typicode.com/users');
-    users.value = res.data;
-  } catch (err) {
-    error.value = err.message;
-  } finally {
-    isLoading.value = false;
-  }
-
-  console.log(users.value);
-}
-
-// Esegui il fetch dei dati quando il componente viene montato
-fetchData();
-</script>
-<template>
-  <Head title="Advanced" />
-
-  <div>
-    <h1>Componente avanzato con Composition API</h1>
-    <template v-if="isLoading">
-      <div class="loading">Caricamento in corso...</div>
-    </template>
-    <template v-else-if="error">
-      <div class="error">Si è verificato un errore: {{ errorMessage }}</div>
-    </template>
-    <template v-else>
-      <p v-for="user in users" :key="user.id" :user="user">{{ user.name }}</p>
-    </template>
-  </div>
-</template>
--->

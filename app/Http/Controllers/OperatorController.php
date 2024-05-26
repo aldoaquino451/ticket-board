@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateOperatorRequest;
+use App\Models\Note;
 use App\Models\Operator;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
@@ -42,8 +44,9 @@ class OperatorController extends Controller
   public function show(Operator $operator)
   {
     $ticket = Ticket::where('operator_id', $operator->id)->whereIn('status', ['assigned', 'in progress'])->first();
+    $notes = Note::where('ticket_id', $ticket->id)->get();
 
-    return Inertia::render('Operators/Show', ['ticket' => $ticket]);
+    return Inertia::render('Operators/Show', ['ticket' => $ticket, 'slug' => $operator->slug, 'notes' => $notes]);
   }
 
   /**
@@ -57,9 +60,22 @@ class OperatorController extends Controller
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, string $id)
+  public function update(UpdateOperatorRequest $request, string $slug)
   {
-    //
+    $validated_data = $request->validated();
+
+    $ticket_id = $validated_data['ticket']['id'];
+    $ticket = Ticket::where('id', $ticket_id)->first();
+    $operator = Operator::where('slug', $slug)->first();
+
+    if ($validated_data['status'] == 'in progress') {
+      $ticket->update($validated_data);
+      return redirect()->route('dashboard.operators.show', ['operator' => $operator]);
+    } else {
+      $ticket->update([$validated_data['status']]);
+      $operator->update(['is_available' => 1]);
+      return redirect()->route('dashboard.operators.index');
+    }
   }
 
   /**

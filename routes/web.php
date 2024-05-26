@@ -27,6 +27,7 @@ use App\Http\Controllers\TicketController;
 Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(function () {
   Route::resource('tickets', TicketController::class)->parameters(['tickets' => 'ticket:code']);
   Route::resource('operators', OperatorController::class)->parameters(['operators' => 'operator:slug']);
+  Route::resource('notes', NoteController::class)->parameters(['notes' => 'note:id']);
 });
 
 Route::middleware('auth')->group(function () {
