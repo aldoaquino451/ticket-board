@@ -76,7 +76,7 @@ class TicketController extends Controller
 
       $flash_message = [
         'message' => 'Il ticket è stato creato con successo e assegnato a un operatore.',
-        'class' => 'font-medium text-sm text-green-600 dark:text-green-400'
+        'class' => 'text-green-600 dark:text-green-400'
       ];
     } else {
 
@@ -85,7 +85,7 @@ class TicketController extends Controller
 
       $flash_message = [
         'message' => 'Il ticket è stato creato con successo ma nessun operatore è attualmente disponibile. Il ticket è stato messo in coda',
-        'class' => 'font-medium text-sm text-yellow-600 dark:text-yellow-400'
+        'class' => 'text-yellow-600 dark:text-yellow-400'
       ];
     }
 

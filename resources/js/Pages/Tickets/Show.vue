@@ -39,7 +39,7 @@ console.log(props.flash);
                             <div
                                 v-if="flash"
                                 :class="flash.class"
-                                class="px-4 py-5 sm:px-6"
+                                class="font-medium text-sm px-4 py-5 sm:px-6"
                             >
                                 {{ flash.message }}
                             </div>

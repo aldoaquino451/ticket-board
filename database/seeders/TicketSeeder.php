@@ -43,7 +43,7 @@ class TicketSeeder extends Seeder
     $createdTime = Carbon::create(2024, 5, 20);
 
     // assigned + in progress
-    $available_operators = Operator::where('is_available', 1)->get();
+    $available_operators = Operator::where('is_available', 0)->get();
 
     foreach ($available_operators as $operator) {
       $createdTime->addMinutes(rand(30, 60));
