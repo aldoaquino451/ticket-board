@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
+use App\Mail\TicketNotification;
 use App\Models\Category;
 use App\Models\Operator;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Faker\Factory as Faker;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail;
 
 class TicketController extends Controller
 {
@@ -92,6 +93,11 @@ class TicketController extends Controller
     $new_ticket = Ticket::create($validated_data);
     $new_ticket->load('category', 'operator'); // Carica le relazioni
 
+    if ($new_ticket->operator_id !== null) {
+      $messageContent = 'Un nuovo ticket è stato creato.';
+      Mail::to($new_ticket->operator->email)->send(new TicketNotification($new_ticket, $messageContent));
+    }
+
     return redirect()->route('dashboard.tickets.show', ['ticket' => $new_ticket->code])
       ->with('flash', $flash_message);
   }
@@ -121,7 +127,7 @@ class TicketController extends Controller
     $statuses = [
       ['id' => 'queued', 'name' => 'In coda'],
       ['id' => 'assigned', 'name' => 'Assegnato'],
-      ['id' => 'in progress', 'name' => 'In lavorazione'],
+      // ['id' => 'in progress', 'name' => 'In lavorazione'],
       ['id' => 'closed', 'name' => 'Chiuso'],
     ];
 
@@ -143,27 +149,42 @@ class TicketController extends Controller
   public function update(UpdateTicketRequest $request, Ticket $ticket)
   {
     $validated_data = $request->validated();
-    $ticket->update($validated_data);
+    $ticket->update(['status' => $validated_data['status']]);
 
     switch ($validated_data['status']) {
       case 'queued':
+
+        $ticket->update(['operator_id' => null]);
+
         $flash_message = [
           'message' => 'Il ticket è stato modificato con successo ed è stato messo in coda.',
           'class' => 'text-amber-600 dark:text-amber-400'
         ];
         break;
       case 'assigned':
+
+        $ticket->update(['operator_id' => $validated_data['operator_id']]);
+
+        $messageContent = 'Ti è stato assegnato un ticket.';
+
         $flash_message = [
           'message' => 'Il ticket è stato modificato con successo e assegnato a un operatore.',
           'class' => 'text-green-600 dark:text-green-400'
         ];
         break;
       case 'closed':
+
+        $messageContent = 'Un ticket è stato chiuso.';
+
         $flash_message = [
           'message' => 'Il ticket è stato modificato con successo ed è stato chiuso.',
           'class' => 'text-red-600 dark:text-red-400'
         ];
         break;
+    }
+
+    if ($ticket->operator_id !== null) {
+      Mail::to($ticket->operator->email)->send(new TicketNotification($ticket, $messageContent));
     }
 
     return redirect()
