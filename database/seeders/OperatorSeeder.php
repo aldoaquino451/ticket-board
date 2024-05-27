@@ -6,6 +6,8 @@ use App\Models\Operator;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Support\Str;
+
 
 class OperatorSeeder extends Seeder
 {
@@ -20,11 +22,13 @@ class OperatorSeeder extends Seeder
 
       $name = $faker->firstName();
       $surname = $faker->lastName();
-      $email = lcfirst($name) . '.' . lcfirst($surname) . '@gmail.com';
+      $slug = Str::slug($name . ' ' . $surname);
+      $email = Str::slug($name . ' ' . $surname) . '@gmail.com';
 
       Operator::create([
         'name' => $name,
         'surname' => $surname,
+        'slug' => $slug,
         'email' => $email,
         'is_available' => $faker->boolean(),
       ]);

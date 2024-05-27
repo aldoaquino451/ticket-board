@@ -19,7 +19,7 @@ class NoteSeeder extends Seeder
     $faker = Faker::create('it_IT');
     $ticketArr = Ticket::pluck('id');
 
-    for ($i = 0; $i < 100; $i++) {
+    for ($i = 0; $i < 1000; $i++) {
 
       Note::create([
         'ticket_id' => $faker->randomElement($ticketArr),

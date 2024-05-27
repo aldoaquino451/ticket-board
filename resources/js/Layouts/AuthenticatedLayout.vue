@@ -6,6 +6,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link } from "@inertiajs/vue3";
+import { store } from "../store.js";
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -33,6 +34,7 @@ const showingNavigationDropdown = ref(false);
 
                         <!-- Navigation Links -->
                         <div
+                            v-if="$page.props.auth.user"
                             class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex"
                         >
                             <NavLink
@@ -42,14 +44,56 @@ const showingNavigationDropdown = ref(false);
                                     route().current('dashboard.tickets.index')
                                 "
                             >
-                                Dashboard
+                                Tickets
+                            </NavLink>
+                            <NavLink
+                                class="dark:text-gray-200"
+                                :href="route('dashboard.operators.index')"
+                                :active="
+                                    route().current('dashboard.operators.index')
+                                "
+                            >
+                                Operatori
+                            </NavLink>
+                        </div>
+                        <div
+                            v-else
+                            class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex"
+                        >
+                            <NavLink
+                                class="dark:text-gray-200"
+                                :href="route('login')"
+                            >
+                                Login
+                            </NavLink>
+                            <NavLink
+                                class="dark:text-gray-200"
+                                :href="route('register')"
+                            >
+                                Register
                             </NavLink>
                         </div>
                     </div>
 
                     <div class="hidden sm:flex sm:items-center sm:ml-6">
+                        <button
+                            @click="store.toggleTheme()"
+                            class="flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 transition duration-150 ease-in-out"
+                        >
+                            <i
+                                v-if="store.currentTheme === 'dark'"
+                                class="fa-solid fa-sun"
+                            ></i>
+                            <i v-else class="fa-solid fa-moon"></i>
+
+                            <span class="ml-2">{{
+                                store.currentTheme === "dark"
+                                    ? "Light Mode"
+                                    : "Dark Mode"
+                            }}</span>
+                        </button>
                         <!-- Settings Dropdown -->
-                        <div class="ml-3 relative">
+                        <div class="ml-3 relative" v-if="$page.props.auth.user">
                             <Dropdown align="right" width="48">
                                 <template #trigger>
                                     <span class="inline-flex rounded-md">
@@ -57,7 +101,9 @@ const showingNavigationDropdown = ref(false);
                                             type="button"
                                             class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-200 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
                                         >
-                                            {{ $page.props.auth.user.name }}
+                                            {{
+                                                `${$page.props.auth.user.name} ${$page.props.auth.user.surname}`
+                                            }}
                                             <svg
                                                 class="ml-2 -mr-0.5 h-4 w-4"
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -76,7 +122,7 @@ const showingNavigationDropdown = ref(false);
 
                                 <template #content>
                                     <DropdownLink :href="route('profile.edit')">
-                                        Profile
+                                        Profilo
                                     </DropdownLink>
                                     <DropdownLink
                                         :href="route('logout')"
@@ -146,12 +192,19 @@ const showingNavigationDropdown = ref(false);
                         :href="route('dashboard.tickets.index')"
                         :active="route().current('dashboard.tickets.index')"
                     >
-                        Dashboard
+                        Tickets
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink
+                        :href="route('dashboard.operators.index')"
+                        :active="route().current('dashboard.operators.index')"
+                    >
+                        Operatori
                     </ResponsiveNavLink>
                 </div>
 
                 <!-- Responsive Settings Options -->
                 <div
+                    v-if="$page.props.auth.user"
                     class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-700"
                 >
                     <div class="px-4">

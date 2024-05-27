@@ -11,8 +11,9 @@ console.log(props.flash);
 </script>
 
 <template>
+    <Head title="Dettagli Ticket" />
+    
     <AuthenticatedLayout>
-        <Head title="Ticket Details" />
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -23,12 +24,12 @@ console.log(props.flash);
                         <h3
                             class="text-lg leading-6 font-medium text-gray-900 dark:text-white"
                         >
-                            Ticket Details
+                            Dettagli del Ticket
                         </h3>
                         <p
                             class="mt-1 text-sm text-gray-600 dark:text-gray-400"
                         >
-                            View the details of the selected ticket.
+                            Mostra tutti i dettagli del ticket selezionato.
                         </p>
                     </div>
                     <div class="border-t border-gray-200 dark:border-gray-700">
@@ -38,7 +39,7 @@ console.log(props.flash);
                             <div
                                 v-if="flash"
                                 :class="flash.class"
-                                class="px-4 py-5 sm:px-6"
+                                class="font-medium text-sm px-4 py-5 sm:px-6"
                             >
                                 {{ flash.message }}
                             </div>
@@ -48,7 +49,7 @@ console.log(props.flash);
                                 <dt
                                     class="text-sm font-medium text-gray-500 dark:text-gray-200"
                                 >
-                                    Title
+                                    Titolo
                                 </dt>
                                 <dd
                                     class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2"
@@ -62,7 +63,7 @@ console.log(props.flash);
                                 <dt
                                     class="text-sm font-medium text-gray-500 dark:text-gray-200"
                                 >
-                                    Code
+                                    Codice
                                 </dt>
                                 <dd
                                     class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2"
@@ -76,7 +77,7 @@ console.log(props.flash);
                                 <dt
                                     class="text-sm font-medium text-gray-500 dark:text-gray-200"
                                 >
-                                    Description
+                                    Descrizione
                                 </dt>
                                 <dd
                                     class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2"
@@ -90,7 +91,7 @@ console.log(props.flash);
                                 <dt
                                     class="text-sm font-medium text-gray-500 dark:text-gray-200"
                                 >
-                                    Status
+                                    Stato
                                 </dt>
                                 <dd
                                     class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2"
@@ -104,7 +105,7 @@ console.log(props.flash);
                                 <dt
                                     class="text-sm font-medium text-gray-500 dark:text-gray-200"
                                 >
-                                    Category
+                                    Categoria
                                 </dt>
                                 <dd
                                     class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2"
@@ -122,7 +123,7 @@ console.log(props.flash);
                                 <dt
                                     class="text-sm font-medium text-gray-500 dark:text-gray-200"
                                 >
-                                    Operator
+                                    Operatore
                                 </dt>
                                 <dd
                                     class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2"
@@ -140,7 +141,7 @@ console.log(props.flash);
                                 <dt
                                     class="text-sm font-medium text-gray-500 dark:text-gray-200"
                                 >
-                                    Created At
+                                    Data Crezione
                                 </dt>
                                 <dd
                                     class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2"
@@ -158,8 +159,7 @@ console.log(props.flash);
                                 <dt
                                     class="text-sm font-medium text-gray-500 dark:text-gray-200"
                                 >
-                                    Updated At
-                                </dt>
+                                    Data Aggiornamento                                </dt>
                                 <dd
                                     class="mt-1 text-sm text-gray-900 dark:text-gray-100 sm:mt-0 sm:col-span-2"
                                 >
