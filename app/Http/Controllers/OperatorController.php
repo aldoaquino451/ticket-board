@@ -16,10 +16,20 @@ class OperatorController extends Controller
    */
   public function index()
   {
-    $available = Operator::where('is_available', 1)->get();
-    $notAvailable = Operator::where('is_available', 0)->get();
+    $available = Operator::where('is_available', 1)
+      ->orderBy('name', 'asc')
+      ->orderBy('surname', 'asc')
+      ->get();
 
-    return Inertia::render('Operators/Index', ['available' => $available, 'notAvailable' => $notAvailable]);
+    $notAvailable = Operator::where('is_available', 0)
+      ->orderBy('name', 'asc')
+      ->orderBy('surname', 'asc')
+      ->get();
+
+    return Inertia::render('Operators/Index', [
+      'available' => $available,
+      'notAvailable' => $notAvailable
+    ]);
   }
 
   /**
@@ -35,7 +45,7 @@ class OperatorController extends Controller
    */
   public function store(Request $request)
   {
-    // 
+    //
   }
 
   /**
@@ -43,10 +53,23 @@ class OperatorController extends Controller
    */
   public function show(Operator $operator)
   {
+    // Trova il primo ticket dell'operatore con stato 'assigned' o 'in progress'
     $ticket = Ticket::where('operator_id', $operator->id)->whereIn('status', ['assigned', 'in progress'])->first();
-    $notes = Note::where('ticket_id', $ticket->id)->get();
 
-    return Inertia::render('Operators/Show', ['ticket' => $ticket, 'slug' => $operator->slug, 'notes' => $notes]);
+    if ($ticket) {
+      $ticket->load('category', 'operator');
+    }
+
+    // Se c'è un ticket, trova le note associate, altrimenti imposta un array vuoto
+    $notes = $ticket ? Note::where('ticket_id', $ticket->id)->get() : [];
+
+    // Rendi la vista passando i dati del ticket e delle note
+    return Inertia::render('Operators/Show', [
+      'ticket' => $ticket,
+      'slug' => $operator->slug,
+      'operator_id' => $operator->id,
+      'notes' => $notes
+    ]);
   }
 
   /**
@@ -60,20 +83,19 @@ class OperatorController extends Controller
   /**
    * Update the specified resource in storage.
    */
-  public function update(UpdateOperatorRequest $request, string $slug)
+  public function update(UpdateOperatorRequest $request, Operator $operator)
   {
     $validated_data = $request->validated();
 
-    $ticket_id = $validated_data['ticket']['id'];
-    $ticket = Ticket::where('id', $ticket_id)->first();
-    $operator = Operator::where('slug', $slug)->first();
+    $ticket = Ticket::where('id', $validated_data['ticket_id'])->first();
 
     if ($validated_data['status'] == 'in progress') {
-      $ticket->update($validated_data);
+      $ticket->update(['status' => $validated_data['status']]);
       return redirect()->route('dashboard.operators.show', ['operator' => $operator]);
-    } else {
-      $ticket->update([$validated_data['status']]);
+    } else if (($validated_data['status'] == 'closed')) {
+      $ticket->update(['status' => $validated_data['status']]);
       $operator->update(['is_available' => 1]);
+      // dd($ticket, $operator);
       return redirect()->route('dashboard.operators.index');
     }
   }

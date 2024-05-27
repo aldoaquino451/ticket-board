@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreNoteRequest;
+use App\Http\Requests\UpdateNoteRequest;
+use App\Models\Note;
+use App\Models\Operator;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 
 class NoteController extends Controller
@@ -30,7 +34,14 @@ class NoteController extends Controller
   {
     $validated_data = $request->validated();
 
-    dd($validated_data);
+    $operator = Operator::where('id', $validated_data['operator_id'])->first();
+
+    Note::create([
+      'ticket_id' => $validated_data['ticket_id'],
+      'content' => $validated_data['content'],
+    ]);
+
+    return redirect()->route('dashboard.operators.show', ['operator' => $operator->slug]);
   }
 
   /**
@@ -52,16 +63,28 @@ class NoteController extends Controller
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, string $id)
+  public function update(UpdateNoteRequest $request, Note $note)
   {
-    //
+    $validated_data = $request->validated();
+
+    $note->update(['content' => $validated_data['content']]);
+
+    $operator = Operator::where('id', $validated_data['operator_id'])->first();
+
+    return redirect()->route('dashboard.operators.show', ['operator' => $operator->slug]);
   }
 
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(string $id)
+  public function destroy(Request $request, Note $note)
   {
-    //
+    $note->delete();
+
+    $operator = Operator::where('id', $request->operator_id)->first();
+
+    // dd($operator);
+
+    return redirect()->route('dashboard.operators.show', ['operator' => $operator->slug]);
   }
 }

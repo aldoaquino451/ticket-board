@@ -2,121 +2,175 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import { Link } from "@inertiajs/vue3";
-// import { ref, defineProps } from "vue";
-// import axios from "axios";
+import { defineProps } from "vue";
 
 const props = defineProps({
-  available: Object,
-  notAvailable: Object,
+    available: Array,
+    notAvailable: Array,
 });
 
 console.log(props);
 </script>
 
-
 <template>
-  <Head title="Operatori" />
+    <Head title="Operatori" />
 
-  <AuthenticatedLayout>
-    <!-- page name -->
-    <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">Operatori</h2>
-    </template>
+    <AuthenticatedLayout>
+        <!-- page name -->
+        <template #header>
+            <h2
+                class="font-semibold text-xl text-gray-800 dark:text-white leading-tight"
+            >
+                Operatori
+            </h2>
+        </template>
 
-    <div class="py-12">
-      <div class="flex gap-x-32 max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div>
-          <p class="text-green-400">Disponibili</p>
-          <ul>
-            <li class="text-white" v-for="operator in props.available">
-              <Link :href="route('dashboard.operators.show', operator.slug)">
-                {{ operator.name }} {{ operator.surname }}
-              </Link>
-            </li>
-          </ul>
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Available Operators -->
+                    <div class="mb-8">
+                        <p
+                            class="text-2xl font-bold text-green-400 dark:text-green-300 mb-4"
+                        >
+                            Disponibili
+                        </p>
+                        <div class="relative overflow-x-auto sm:rounded-lg">
+                            <table
+                                class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 sm:rounded-lg overflow-hidden shadow-sm"
+                            >
+                                <thead
+                                    class="text-xs text-gray-900 dark:text-white uppercase bg-gray-200 dark:bg-gray-700"
+                                >
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">
+                                            Nome
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Email
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Azione
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="operator in props.available"
+                                        :key="operator.slug"
+                                        class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                    >
+                                        <th
+                                            scope="row"
+                                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                        >
+                                            <Link
+                                                :href="
+                                                    route(
+                                                        'dashboard.operators.show',
+                                                        operator.slug
+                                                    )
+                                                "
+                                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                            >
+                                                {{ operator.name }}
+                                                {{ operator.surname }}
+                                            </Link>
+                                        </th>
+                                        <td class="px-6 py-4">
+                                            {{ operator.email }}
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <Link
+                                                :href="
+                                                    route(
+                                                        'dashboard.operators.edit',
+                                                        operator.slug
+                                                    )
+                                                "
+                                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                            >
+                                                Modifica
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Not Available Operators -->
+                    <div class="mb-8">
+                        <p
+                            class="text-2xl font-bold text-red-400 dark:text-red-300 mb-4"
+                        >
+                            Non disponibili
+                        </p>
+                        <div class="relative overflow-x-auto sm:rounded-lg">
+                            <table
+                                class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 sm:rounded-lg overflow-hidden shadow-sm"
+                            >
+                                <thead
+                                    class="text-xs text-gray-900 dark:text-white uppercase bg-gray-200 dark:bg-gray-700"
+                                >
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">
+                                            Nome
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Email
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Azione
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="operator in props.notAvailable"
+                                        :key="operator.slug"
+                                        class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                    >
+                                        <th
+                                            scope="row"
+                                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                        >
+                                            <Link
+                                                :href="
+                                                    route(
+                                                        'dashboard.operators.show',
+                                                        operator.slug
+                                                    )
+                                                "
+                                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                            >
+                                                {{ operator.name }}
+                                                {{ operator.surname }}
+                                            </Link>
+                                        </th>
+                                        <td class="px-6 py-4">
+                                            {{ operator.email }}
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <Link
+                                                :href="
+                                                    route(
+                                                        'dashboard.operators.edit',
+                                                        operator.slug
+                                                    )
+                                                "
+                                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                            >
+                                                Modifica
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div>
-          <p class="text-red-400">Non disponibili</p>
-          <ul>
-            <li class="text-white" v-for="operator in props.notAvailable">
-              <Link :href="route('dashboard.operators.show', operator.slug)">
-                {{ operator.name }} {{ operator.surname }}
-              </Link>
-            </li>          
-          </ul>
-        </div>
-      </div>
-    </div>
-  </AuthenticatedLayout>
-
+    </AuthenticatedLayout>
 </template>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- 
-<script setup>
-import { ref, reactive } from '@vue/reactivity';
-import { Head } from '@inertiajs/vue3';
-import axios from 'axios';
-
-// Definizione delle variabili reactive
-const isLoading = ref(true);
-const error = ref(null);
-const users = ref([]);
-
-// Fetch dei dati dall'API
-async function fetchData() {
-  try {
-    const res = await axios.get('https://jsonplaceholder.typicode.com/users');
-    users.value = res.data;
-  } catch (err) {
-    error.value = err.message;
-  } finally {
-    isLoading.value = false;
-  }
-
-  console.log(users.value);
-}
-
-// Esegui il fetch dei dati quando il componente viene montato
-fetchData();
-</script>
-<template>
-  <Head title="Advanced" />
-
-  <div>
-    <h1>Componente avanzato con Composition API</h1>
-    <template v-if="isLoading">
-      <div class="loading">Caricamento in corso...</div>
-    </template>
-    <template v-else-if="error">
-      <div class="error">Si è verificato un errore: {{ errorMessage }}</div>
-    </template>
-    <template v-else>
-      <p v-for="user in users" :key="user.id" :user="user">{{ user.name }}</p>
-    </template>
-  </div>
-</template>
--->

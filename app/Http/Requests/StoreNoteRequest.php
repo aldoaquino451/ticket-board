@@ -22,8 +22,9 @@ class StoreNoteRequest extends FormRequest
   public function rules(): array
   {
     return [
-      // 'ticket_id' => 'required',
-      'content' => 'required',
+      'ticket_id' => 'required|int|exists:tickets,id',
+      'operator_id' => 'required|int|exists:operators,id',
+      'content' => 'required|string',
       // 'new_note' => 'required',
     ];
   }

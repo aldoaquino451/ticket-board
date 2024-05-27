@@ -23,7 +23,7 @@ class UpdateOperatorRequest extends FormRequest
   {
     return [
       'status' => 'required|string|in:closed,queued,in progress,assigned',
-      'ticket' => 'required'
+      'ticket_id' => 'required|int|exists:tickets,id'
     ];
   }
 }
