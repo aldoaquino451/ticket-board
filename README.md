@@ -31,6 +31,7 @@ aldo:
   - light/dark mode: toogle bottone (oppure in base alla mode del browser??)
   - paginazione di diversi liste
   - filtraggio risultati
+  - su mailtrap si visualizza la mail che viene mandata dal sistema all'operatore quando gli viene assegnato un ticket o quando lo user non autenticato chiude il ticket
 
 
 per ultimo
