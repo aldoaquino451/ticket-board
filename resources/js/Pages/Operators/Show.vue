@@ -6,7 +6,7 @@ import Textarea from "@/Components/Textarea.vue";
 import { Head, useForm, router } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
-import { ref, watch, onMounted } from "vue";
+import { ref, watch } from "vue";
 
 const props = defineProps({
     ticket: Object,
@@ -145,7 +145,8 @@ console.log(props.notes);
             <h2
                 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight"
             >
-                Dettagli Operatore
+                Dettagli Operatore:
+                {{ `${props.operator.name} ${props.operator.surname}` }}
             </h2>
         </template>
 
@@ -157,11 +158,11 @@ console.log(props.notes);
                         @submit.prevent="submit"
                         class="space-y-6 lg:space-y-0 lg:flex flex-wrap"
                     >
-                        <PrimaryButton class="lg:mt-6">
+                        <PrimaryButton>
                             {{
                                 props.ticket.status == "assigned"
-                                    ? "In progress"
-                                    : "Closed"
+                                    ? "In lavorazione"
+                                    : "Chiuso"
                             }}
                         </PrimaryButton>
                     </form>
@@ -171,15 +172,14 @@ console.log(props.notes);
                         class="space-y-6 lg:space-y-0 lg:flex flex-wrap"
                     >
                         <PrimaryButton
-                            class="lg:mt-6"
                             :isDisabled="
                                 formCreateNote.processing || props.ticket
                             "
                         >
                             {{
                                 props.operator.is_available
-                                    ? "Set Not available"
-                                    : "Set Available"
+                                    ? "Non disponibile"
+                                    : "Disponibile"
                             }}
                         </PrimaryButton>
                     </form>
@@ -499,68 +499,74 @@ console.log(props.notes);
                             Nessuna nota disponibile.
                         </span>
                     </div>
-                    <div
-                        v-if="props.ticket"
-                        class="mt-5 p-4 text-gray-900 dark:text-gray-800 rounded-lg shadow-md relative"
-                        :class="newNoteColorClass"
-                    >
-                        <div class="relative note-box">
-                            <div class="text-gray-800 dark:text-white">
-                                <form
-                                    @submit.prevent="submitCreateNote"
-                                    class="p-6 space-y-6"
-                                >
-                                    <div>
-                                        <InputLabel
-                                            for="note_content"
-                                            value="Nuova nota:"
-                                            class="text-gray-900 dark:text-gray-200"
-                                        />
-
-                                        <Textarea
-                                            id="note_content"
-                                            class="mt-1 block w-full bg-transparent text-gray-900 dark:text-gray-300 p-0 border-0 focus:ring-0 resize-none"
-                                            v-model="formCreateNote.content"
-                                            required
-                                            rows="5"
-                                            style="
-                                                line-height: 1.5em;
-                                                background-image: repeating-linear-gradient(
-                                                    to bottom,
-                                                    transparent,
-                                                    transparent
-                                                        calc(1.5em - 1px),
-                                                    #d1d5db calc(1.5em - 1px),
-                                                    #d1d5db 1.5em
-                                                );
-                                                background-attachment: local;
-                                            "
-                                        />
-
-                                        <InputError
-                                            class="mt-2 text-red-600 dark:text-red-400"
-                                            :message="
-                                                formCreateNote.errors
-                                                    .note_content
-                                            "
-                                        />
-                                    </div>
-                                    <div
-                                        class="flex items-center justify-end mt-4"
+                    <div v-if="props.ticket">
+                        <p
+                            class="mt-8 mb-4 text-lg font-semibold text-gray-800 dark:text-white"
+                        >
+                            Nuova nota:
+                        </p>
+                        <div
+                            class="mt-5 p-4 text-gray-900 dark:text-gray-800 rounded-lg shadow-md relative"
+                            :class="newNoteColorClass"
+                        >
+                            <div class="relative note-box">
+                                <div class="text-gray-800 dark:text-white">
+                                    <form
+                                        @submit.prevent="submitCreateNote"
+                                        class="p-6 space-y-6"
                                     >
-                                        <PrimaryButton
-                                            :class="{
-                                                'opacity-25':
-                                                    formCreateNote.processing,
-                                            }"
-                                            :disabled="
-                                                formCreateNote.processing
-                                            "
+                                        <div>
+                                            <InputLabel
+                                                for="note_content"
+                                                class="text-gray-900 dark:text-gray-200"
+                                            />
+
+                                            <Textarea
+                                                id="note_content"
+                                                class="mt-1 block w-full bg-transparent text-gray-900 dark:text-gray-300 p-0 border-0 focus:ring-0 resize-none"
+                                                v-model="formCreateNote.content"
+                                                required
+                                                rows="5"
+                                                style="
+                                                    line-height: 1.5em;
+                                                    background-image: repeating-linear-gradient(
+                                                        to bottom,
+                                                        transparent,
+                                                        transparent
+                                                            calc(1.5em - 1px),
+                                                        #d1d5db
+                                                            calc(1.5em - 1px),
+                                                        #d1d5db 1.5em
+                                                    );
+                                                    background-attachment: local;
+                                                "
+                                            />
+
+                                            <InputError
+                                                class="mt-2 text-red-600 dark:text-red-400"
+                                                :message="
+                                                    formCreateNote.errors
+                                                        .note_content
+                                                "
+                                            />
+                                        </div>
+                                        <div
+                                            class="flex items-center justify-end mt-4"
                                         >
-                                            Crea
-                                        </PrimaryButton>
-                                    </div>
-                                </form>
+                                            <PrimaryButton
+                                                :class="{
+                                                    'opacity-25':
+                                                        formCreateNote.processing,
+                                                }"
+                                                :disabled="
+                                                    formCreateNote.processing
+                                                "
+                                            >
+                                                Crea
+                                            </PrimaryButton>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>

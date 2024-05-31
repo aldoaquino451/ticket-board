@@ -6,8 +6,10 @@ use App\Http\Requests\UpdateOperatorRequest;
 use App\Models\Note;
 use App\Models\Operator;
 use App\Models\Ticket;
+use App\Mail\TicketNotification;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Mail;
 
 class OperatorController extends Controller
 {
@@ -128,6 +130,10 @@ class OperatorController extends Controller
         $oldestQueuedTicket->update(['operator_id' => $operator->id]);
         $operator->update(['is_available' => false]);
 
+        $messageContent = 'Ti è stato assegnato un ticket';
+
+        Mail::to($operator->email)->send(new TicketNotification($oldestQueuedTicket, $messageContent));
+
         // dd($oldestQueuedTicket, $operator);
 
         return redirect()->route('dashboard.operators.show', ['operator' => $operator]);
@@ -140,6 +146,12 @@ class OperatorController extends Controller
       $ticket = Ticket::where('id', $validated_data['ticket_id'])->first();
 
       $ticket->update(['status' => $validated_data['status']]);
+
+      if ($ticket->status === 'closed') {
+        $messageContent = 'Un ticket è stato chiuso.';
+
+        Mail::to($ticket->operator->email)->send(new TicketNotification($ticket, $messageContent));
+      }
 
       return redirect()->route('dashboard.operators.show', ['operator' => $operator]);
     }
