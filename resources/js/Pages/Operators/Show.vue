@@ -6,9 +6,8 @@ import Textarea from "@/Components/Textarea.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { Head, useForm, router } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 import { ref, watch } from "vue";
-
-const new_note = ref("");
 
 const props = defineProps({
     ticket: Object,
@@ -17,12 +16,35 @@ const props = defineProps({
     notes: Array,
 });
 
-const editableNotes = ref(props.notes.map((note) => ({ ...note })));
+const getRandomPastelColorClass = () => {
+    const colors = [
+        "bg-pink-100 dark:bg-pink-900",
+        "bg-yellow-100 dark:bg-yellow-900",
+        "bg-green-100 dark:bg-green-900",
+        "bg-blue-100 dark:bg-blue-900",
+        "bg-purple-100 dark:bg-purple-900",
+        "bg-indigo-100 dark:bg-indigo-900",
+    ];
+
+    return colors[Math.floor(Math.random() * colors.length)];
+};
+
+let newNoteColorClass = getRandomPastelColorClass();
+
+const editableNotes = ref(
+    props.notes.map((note) => ({
+        ...note,
+        colorClass: getRandomPastelColorClass(),
+    }))
+);
 
 watch(
     () => props.notes,
     (notes) => {
-        editableNotes.value = notes.map((note) => ({ ...note }));
+        editableNotes.value = notes.map((note) => ({
+            ...note,
+            colorClass: note.colorClass || getRandomPastelColorClass(),
+        }));
     },
     { immediate: true }
 );
@@ -95,19 +117,6 @@ const submitDeleteNote = (id) => {
 // const addNote = () => {
 //     formNote.post(route("dashboard.notes.store"));
 // };
-
-const getRandomPastelColorClass = () => {
-    const colors = [
-        "bg-pink-100 dark:bg-pink-900",
-        "bg-yellow-100 dark:bg-yellow-900",
-        "bg-green-100 dark:bg-green-900",
-        "bg-blue-100 dark:bg-blue-900",
-        "bg-purple-100 dark:bg-purple-900",
-        "bg-indigo-100 dark:bg-indigo-900",
-    ];
-
-    return colors[Math.floor(Math.random() * colors.length)];
-};
 
 console.log(props.ticket);
 console.log(props.notes);
@@ -323,11 +332,11 @@ console.log(props.notes);
                         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4"
                     >
                         <div
-                            v-for="note in editableNotes"
+                            v-for="(note, index) in editableNotes"
                             :key="note.id"
-                            :class="`${getRandomPastelColorClass()} text-gray-900 dark:text-gray-800 rounded-lg shadow-md relative`"
+                            :class="`${note.colorClass} text-gray-900 dark:text-gray-800 rounded-lg shadow-md relative`"
                         >
-                            <div class="p-4 pt-3 pb-12">
+                            <div class="p-4 pt-6 pb-14">
                                 <div class="note-box">
                                     <div class="text-gray-800 dark:text-white">
                                         <form
@@ -336,7 +345,7 @@ console.log(props.notes);
                                             "
                                         >
                                             <PrimaryButton
-                                                class="bg-red-500 hover:bg-red-600 focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 p-2 rounded-full text-white hover:text-white dark:bg-red-800 dark:hover:bg-red-700 dark:hover:text-gray-100 focus:outline-none"
+                                                class="delete-button absolute top-2 right-3 bg-red-500 hover:bg-red-600 focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 p-2 rounded-full text-white dark:text-white hover:text-white dark:bg-red-800 dark:hover:bg-red-700 dark:hover:text-gray-100 focus:outline-none"
                                                 :disabled="
                                                     formCreateNote.processing
                                                 "
@@ -346,7 +355,10 @@ console.log(props.notes);
                                         </form>
                                         <form
                                             @submit.prevent="
-                                                submitDeleteNote(note.id)
+                                                submitUpdateNote(
+                                                    note.id,
+                                                    note.content
+                                                )
                                             "
                                             class="pt-5 space-y-6"
                                         >
@@ -359,11 +371,28 @@ console.log(props.notes);
 
                                                 <Textarea
                                                     id="note_content"
-                                                    class="mt-1 block w-full bg-transparent border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md p-0"
+                                                    class="mt-1 block w-full bg-transparent text-gray-900 dark:text-gray-300 p-0 border-0 focus:ring-0 resize-none"
                                                     :value="note.content"
                                                     v-model="note.content"
                                                     required
                                                     rows="5"
+                                                    style="
+                                                        line-height: 1.5em;
+                                                        background-image: repeating-linear-gradient(
+                                                            to bottom,
+                                                            transparent,
+                                                            transparent
+                                                                calc(
+                                                                    1.5em - 1px
+                                                                ),
+                                                            #d1d5db
+                                                                calc(
+                                                                    1.5em - 1px
+                                                                ),
+                                                            #d1d5db 1.5em
+                                                        );
+                                                        background-attachment: local;
+                                                    "
                                                 />
 
                                                 <InputError
@@ -375,19 +404,39 @@ console.log(props.notes);
                                                 />
                                             </div>
                                             <div
-                                                class="absolute bottom-2 left-3 flex items-center justify-end mt-4"
+                                                v-show="
+                                                    note.content.trim() !==
+                                                    props.notes[
+                                                        index
+                                                    ].content.trim()
+                                                "
+                                                class="absolute bottom-2 left-4 flex items-center justify-end mt-4"
                                             >
                                                 <PrimaryButton
                                                     :class="{
                                                         'opacity-25':
                                                             formCreateNote.processing,
                                                     }"
-                                                    :disabled="
-                                                        formCreateNote.processing
+                                                    :isDisabled="
+                                                        formCreateNote.processing ||
+                                                        note.content === ''
                                                     "
                                                 >
                                                     Modifica
                                                 </PrimaryButton>
+                                                <SecondaryButton
+                                                    class="ms-2"
+                                                    @click="
+                                                        note.content =
+                                                            props.notes[
+                                                                index
+                                                            ].content
+                                                    "
+                                                >
+                                                    <i
+                                                        class="fa-solid fa-rotate-left"
+                                                    ></i>
+                                                </SecondaryButton>
                                             </div>
                                         </form>
                                     </div>
@@ -407,17 +456,18 @@ console.log(props.notes);
                                     </span>
                                 </div>
                             </div>
-                            <span
-                                v-if="props.notes.length === 0"
-                                class="text-gray-900 dark:text-white"
-                            >
-                                Nessuna nota disponibile.
-                            </span>
                         </div>
+                        <span
+                            v-if="editableNotes.length === 0"
+                            class="text-gray-900 dark:text-white"
+                        >
+                            Nessuna nota disponibile.
+                        </span>
                     </div>
                     <div
-                        v-if="props.notes.length !== 0"
-                        :class="`${getRandomPastelColorClass()} mt-5 p-4 text-gray-900 dark:text-gray-800 rounded-lg shadow-md relative`"
+                        v-if="props.ticket"
+                        class="mt-5 p-4 text-gray-900 dark:text-gray-800 rounded-lg shadow-md relative"
+                        :class="newNoteColorClass"
                     >
                         <div class="relative note-box">
                             <div class="text-gray-800 dark:text-white">
@@ -434,10 +484,22 @@ console.log(props.notes);
 
                                         <Textarea
                                             id="note_content"
-                                            class="mt-1 block w-full bg-transparent border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
+                                            class="mt-1 block w-full bg-transparent text-gray-900 dark:text-gray-300 p-0 border-0 focus:ring-0 resize-none"
                                             v-model="formCreateNote.content"
                                             required
                                             rows="5"
+                                            style="
+                                                line-height: 1.5em;
+                                                background-image: repeating-linear-gradient(
+                                                    to bottom,
+                                                    transparent,
+                                                    transparent
+                                                        calc(1.5em - 1px),
+                                                    #d1d5db calc(1.5em - 1px),
+                                                    #d1d5db 1.5em
+                                                );
+                                                background-attachment: local;
+                                            "
                                         />
 
                                         <InputError
@@ -474,14 +536,13 @@ console.log(props.notes);
 </template>
 
 <style lang="scss">
-.note-date {
+.delete-button {
     opacity: 0%;
-    user-select: none;
 }
 
 .note-box:hover {
     cursor: pointer;
-    .note-date {
+    .delete-button {
         opacity: 100%;
     }
 }
