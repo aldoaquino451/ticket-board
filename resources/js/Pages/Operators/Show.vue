@@ -14,6 +14,7 @@ const props = defineProps({
     slug: String,
     operator_id: Number,
     notes: Array,
+    operator: Object,
 });
 
 const getRandomPastelColorClass = () => {
@@ -72,6 +73,14 @@ const submit = () => {
             }
         },
     });
+};
+
+const formToggleOperator = useForm({
+    is_available: !props.operator.is_available,
+});
+
+const submitToggleOperator = () => {
+    formToggleOperator.put(route("dashboard.operators.update", props.slug));
 };
 
 const formCreateNote = useForm({
@@ -136,19 +145,39 @@ console.log(props.notes);
 
         <div class="py-12 text-gray-300">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <form
-                    v-if="props.ticket"
-                    @submit.prevent="submit"
-                    class="space-y-6 lg:space-y-0 lg:flex flex-wrap"
-                >
-                    <PrimaryButton class="lg:mt-6">
-                        {{
-                            props.ticket.status == "assigned"
-                                ? "In progress"
-                                : "Closed"
-                        }}
-                    </PrimaryButton>
-                </form>
+                <div class="flex gap-3">
+                    <form
+                        v-if="props.ticket"
+                        @submit.prevent="submit"
+                        class="space-y-6 lg:space-y-0 lg:flex flex-wrap"
+                    >
+                        <PrimaryButton class="lg:mt-6">
+                            {{
+                                props.ticket.status == "assigned"
+                                    ? "In progress"
+                                    : "Closed"
+                            }}
+                        </PrimaryButton>
+                    </form>
+
+                    <form
+                        @submit.prevent="submitToggleOperator"
+                        class="space-y-6 lg:space-y-0 lg:flex flex-wrap"
+                    >
+                        <PrimaryButton
+                            class="lg:mt-6"
+                            :isDisabled="
+                                formCreateNote.processing || props.ticket
+                            "
+                        >
+                            {{
+                                props.operator.is_available
+                                    ? "Set Not available"
+                                    : "Set Available"
+                            }}
+                        </PrimaryButton>
+                    </form>
+                </div>
 
                 <div
                     v-if="props.ticket"

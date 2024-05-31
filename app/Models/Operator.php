@@ -18,7 +18,7 @@ class Operator extends Model
     'is_available'
   ];
 
-  public function notes(): HasMany
+  public function tickets(): HasMany
   {
     return $this->hasMany(Ticket::class);
   }

@@ -19,11 +19,17 @@ class OperatorController extends Controller
     $available = Operator::where('is_available', 1)
       ->orderBy('name', 'asc')
       ->orderBy('surname', 'asc')
+      ->with(['tickets' => function ($query) {
+        $query->whereIn('status', ['assigned', 'in progress']);
+      }])
       ->get();
 
     $notAvailable = Operator::where('is_available', 0)
       ->orderBy('name', 'asc')
       ->orderBy('surname', 'asc')
+      ->with(['tickets' => function ($query) {
+        $query->whereIn('status', ['assigned', 'in progress']);
+      }])
       ->get();
 
     return Inertia::render('Operators/Index', [
@@ -31,6 +37,7 @@ class OperatorController extends Controller
       'notAvailable' => $notAvailable
     ]);
   }
+
 
   /**
    * Show the form for creating a new resource.
@@ -68,7 +75,8 @@ class OperatorController extends Controller
       'ticket' => $ticket,
       'slug' => $operator->slug,
       'operator_id' => $operator->id,
-      'notes' => $notes
+      'notes' => $notes,
+      'operator' => $operator
     ]);
   }
 
@@ -87,16 +95,25 @@ class OperatorController extends Controller
   {
     $validated_data = $request->validated();
 
-    $ticket = Ticket::where('id', $validated_data['ticket_id'])->first();
 
-    if ($validated_data['status'] == 'in progress') {
-      $ticket->update(['status' => $validated_data['status']]);
-      return redirect()->route('dashboard.operators.show', ['operator' => $operator]);
-    } else if (($validated_data['status'] == 'closed')) {
-      $ticket->update(['status' => $validated_data['status']]);
-      $operator->update(['is_available' => 1]);
-      // dd($ticket, $operator);
+    if ($request->has('is_available')) {
+
+      $operator->update(['is_available' => $validated_data['is_available']]);
+
       return redirect()->route('dashboard.operators.index');
+    } else {
+
+      $ticket = Ticket::where('id', $validated_data['ticket_id'])->first();
+
+      if ($validated_data['status'] == 'in progress') {
+        $ticket->update(['status' => $validated_data['status']]);
+        return redirect()->route('dashboard.operators.show', ['operator' => $operator]);
+      } else if (($validated_data['status'] == 'closed')) {
+        $ticket->update(['status' => $validated_data['status']]);
+        $operator->update(['is_available' => 1]);
+        // dd($ticket, $operator);
+        return redirect()->route('dashboard.operators.index');
+      }
     }
   }
 

@@ -22,8 +22,9 @@ class UpdateOperatorRequest extends FormRequest
   public function rules(): array
   {
     return [
-      'status' => 'required|string|in:closed,queued,in progress,assigned',
-      'ticket_id' => 'required|int|exists:tickets,id'
+      'status' => 'sometimes|string|in:closed,queued,in progress,assigned',
+      'ticket_id' => 'sometimes|int|exists:tickets,id',
+      'is_available' => 'sometimes|boolean'
     ];
   }
 }

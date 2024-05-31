@@ -50,7 +50,7 @@ console.log(props);
                                             Email
                                         </th>
                                         <th scope="col" class="px-6 py-3">
-                                            Azione
+                                            Tickets
                                         </th>
                                     </tr>
                                 </thead>
@@ -81,17 +81,11 @@ console.log(props);
                                             {{ operator.email }}
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <Link
-                                                :href="
-                                                    route(
-                                                        'dashboard.operators.edit',
-                                                        operator.slug
-                                                    )
-                                                "
-                                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                            >
-                                                Modifica
-                                            </Link>
+                                            {{
+                                                operator.tickets.length === 0
+                                                    ? "Nessuno"
+                                                    : operator.tickets.length
+                                            }}
                                         </td>
                                     </tr>
                                 </tbody>
@@ -121,7 +115,7 @@ console.log(props);
                                             Email
                                         </th>
                                         <th scope="col" class="px-6 py-3">
-                                            Azione
+                                            Tickets
                                         </th>
                                     </tr>
                                 </thead>
@@ -152,17 +146,11 @@ console.log(props);
                                             {{ operator.email }}
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <Link
-                                                :href="
-                                                    route(
-                                                        'dashboard.operators.edit',
-                                                        operator.slug
-                                                    )
-                                                "
-                                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                            >
-                                                Modifica
-                                            </Link>
+                                            {{
+                                                operator.tickets.length === 0
+                                                    ? "Nessuno"
+                                                    : operator.tickets.length
+                                            }}
                                         </td>
                                     </tr>
                                 </tbody>
