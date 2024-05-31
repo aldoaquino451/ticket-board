@@ -3,7 +3,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import Textarea from "@/Components/Textarea.vue";
-import TextInput from "@/Components/TextInput.vue";
 import { Head, useForm, router } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
@@ -16,6 +15,8 @@ const props = defineProps({
     notes: Array,
     operator: Object,
 });
+
+console.log(props.flash);
 
 const getRandomPastelColorClass = () => {
     const colors = [
@@ -64,13 +65,9 @@ const form = useForm({
 const submit = () => {
     form.put(route("dashboard.operators.update", props.slug), {
         onSuccess: () => {
-            if (form.status === "in progress") {
-                router.visit(
-                    route("dashboard.operators.show", { operator: props.slug })
-                );
-            } else {
-                router.visit(route("dashboard.operators.index"));
-            }
+            router.visit(
+                route("dashboard.operators.show", { operator: props.slug })
+            );
         },
     });
 };
@@ -80,7 +77,17 @@ const formToggleOperator = useForm({
 });
 
 const submitToggleOperator = () => {
-    formToggleOperator.put(route("dashboard.operators.update", props.slug));
+    formToggleOperator.put(route("dashboard.operators.update", props.slug), {
+        // onSuccess: () => {
+        //     if (formToggleOperator.is_available && props.flash) {
+        //         router.visit(
+        //             route("dashboard.operators.show", { operator: props.slug })
+        //         );
+        //     } else {
+        //         router.visit(route("dashboard.operators.index"));
+        //     }
+        // },
+    });
 };
 
 const formCreateNote = useForm({

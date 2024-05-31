@@ -32,9 +32,12 @@ class OperatorController extends Controller
       }])
       ->get();
 
+    $flash_message = session('flash', null);
+
     return Inertia::render('Operators/Index', [
       'available' => $available,
-      'notAvailable' => $notAvailable
+      'notAvailable' => $notAvailable,
+      'flash' => $flash_message,
     ]);
   }
 
@@ -70,13 +73,16 @@ class OperatorController extends Controller
     // Se c'è un ticket, trova le note associate, altrimenti imposta un array vuoto
     $notes = $ticket ? Note::where('ticket_id', $ticket->id)->get() : [];
 
+    $flash_message = session('flash', null);
+
     // Rendi la vista passando i dati del ticket e delle note
     return Inertia::render('Operators/Show', [
       'ticket' => $ticket,
       'slug' => $operator->slug,
       'operator_id' => $operator->id,
       'notes' => $notes,
-      'operator' => $operator
+      'operator' => $operator,
+      'flash' => $flash_message,
     ]);
   }
 
@@ -95,25 +101,45 @@ class OperatorController extends Controller
   {
     $validated_data = $request->validated();
 
-
     if ($request->has('is_available')) {
 
       $operator->update(['is_available' => $validated_data['is_available']]);
 
-      return redirect()->route('dashboard.operators.index');
+      if ($validated_data['is_available'] === true) {
+
+        $oldestQueuedTicket = Ticket::where('status', 'queued')
+          ->orderBy('created_at', 'asc')
+          ->first();
+
+        if (!$oldestQueuedTicket) {
+
+          $flash_message = [
+            'message' => 'Attualmente non ci sono ticket in coda da poter lavorare.',
+            'class' => 'text-red-600 dark:text-red-400'
+          ];
+
+          // return redirect()->route('dashboard.operators.show', ['operator' => $operator])->with('flash', $flash_message);
+          return redirect()->route('dashboard.operators.index')->with('flash', $flash_message);
+        }
+
+        $oldestQueuedTicket->update(['status' => 'assigned']);
+        $oldestQueuedTicket->update(['operator_id' => $operator->id]);
+        $operator->update(['is_available' => false]);
+
+        // dd($oldestQueuedTicket, $operator);
+
+        return redirect()->route('dashboard.operators.show', ['operator' => $operator]);
+      } else {
+
+        return redirect()->route('dashboard.operators.index');
+      }
     } else {
 
       $ticket = Ticket::where('id', $validated_data['ticket_id'])->first();
 
-      if ($validated_data['status'] == 'in progress') {
-        $ticket->update(['status' => $validated_data['status']]);
-        return redirect()->route('dashboard.operators.show', ['operator' => $operator]);
-      } else if (($validated_data['status'] == 'closed')) {
-        $ticket->update(['status' => $validated_data['status']]);
-        $operator->update(['is_available' => 1]);
-        // dd($ticket, $operator);
-        return redirect()->route('dashboard.operators.index');
-      }
+      $ticket->update(['status' => $validated_data['status']]);
+
+      return redirect()->route('dashboard.operators.show', ['operator' => $operator]);
     }
   }
 

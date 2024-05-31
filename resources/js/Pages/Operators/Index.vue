@@ -7,6 +7,7 @@ import { defineProps } from "vue";
 const props = defineProps({
     available: Array,
     notAvailable: Array,
+    flash: Object,
 });
 
 console.log(props);
@@ -27,6 +28,13 @@ console.log(props);
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div
+                    v-if="flash"
+                    :class="flash.class"
+                    class="font-medium text-sm py-5 pb-12"
+                >
+                    {{ flash.message }}
+                </div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <!-- Available Operators -->
                     <div class="mb-8">
