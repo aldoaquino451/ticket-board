@@ -101,6 +101,8 @@ class OperatorController extends Controller
   {
     $validated_data = $request->validated();
 
+    // dd($validated_data);
+
     if ($request->has('is_available')) {
 
       $operator->update(['is_available' => $validated_data['is_available']]);

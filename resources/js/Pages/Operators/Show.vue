@@ -6,7 +6,7 @@ import Textarea from "@/Components/Textarea.vue";
 import { Head, useForm, router } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 
 const props = defineProps({
     ticket: Object,
@@ -54,21 +54,20 @@ watch(
 console.log(editableNotes.value);
 
 const form = useForm({
-    status: props.ticket
-        ? props.ticket.status == "assigned"
-            ? "in progress"
-            : "closed"
-        : "",
-    ticket_id: props.ticket ? props.ticket.id : "",
+    status: "",
+    ticket_id: "",
 });
 
 const submit = () => {
+    form.ticket_id = props.ticket.id;
+    form.status = props.ticket.status === "assigned" ? "in progress" : "closed";
+
     form.put(route("dashboard.operators.update", props.slug), {
-        onSuccess: () => {
-            router.visit(
-                route("dashboard.operators.show", { operator: props.slug })
-            );
-        },
+        // onSuccess: () => {
+        //     router.visit(
+        //         route("dashboard.operators.show", { operator: props.slug })
+        //     );
+        // },
     });
 };
 
