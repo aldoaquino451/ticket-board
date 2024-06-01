@@ -55,6 +55,15 @@ const showingNavigationDropdown = ref(false);
                             >
                                 Operatori
                             </NavLink>
+                            <NavLink
+                                class="dark:text-gray-200"
+                                :href="route('dashboard.categories.index')"
+                                :active="
+                                    route().current('dashboard.categories.index')
+                                "
+                            >
+                                Categorie
+                            </NavLink>
                         </div>
                         <div
                             v-else
