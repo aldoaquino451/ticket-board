@@ -22,24 +22,27 @@ class TicketController extends Controller
   {
     $tickets = Ticket::with(['category', 'operator'])->paginate(15);
 
-    $pagination = [
-      'tickets' => $tickets->items(),
-      'pagination' => [
-        'current_page' => $tickets->currentPage(),
-        'last_page' => $tickets->lastPage(),
-        'from' => $tickets->firstItem(),
-        'to' => $tickets->lastItem(),
-        'total' => $tickets->total(),
-      ],
-    ];
+    $operators = Operator::all();
 
-    // Controlla se la richiesta è AJAX e restituisci una risposta JSON
-    if ($request->expectsJson()) {
-      return response()->json($pagination);
-    }
+    // $pagination = [
+    //   'tickets' => $tickets->items(),
+    //   'operators' => $operators,
+    //   'pagination' => [
+    //     'current_page' => $tickets->currentPage(),
+    //     'last_page' => $tickets->lastPage(),
+    //     'from' => $tickets->firstItem(),
+    //     'to' => $tickets->lastItem(),
+    //     'total' => $tickets->total(),
+    //   ],
+    // ];
 
-    // Restituisci la vista Inertia se la richiesta non è AJAX
-    return Inertia::render('Tickets/Index', $pagination);
+    // // Restituisci la vista Inertia se la richiesta non è AJAX
+    // return Inertia::render('Tickets/Index', $pagination);
+
+    return Inertia::render('Tickets/Index', [
+      'tickets' => $tickets,
+      'operators' => $operators,
+    ]);
   }
 
   /**

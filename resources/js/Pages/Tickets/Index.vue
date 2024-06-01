@@ -4,11 +4,17 @@ import { Link } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import axios from "axios";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import Datalist from "@/Components/Datalist.vue";
+import Select from "@/Components/Select.vue";
 
 const props = defineProps({
     tickets: Object,
-    pagination: Object,
+    operators: Object,
 });
+
+console.log(props.operators);
 
 // Inizializza variabili reattive
 const ticketsArray = ref([]);
@@ -21,11 +27,15 @@ const paginationArray = ref({
 });
 const currentPage = ref(1);
 
+console.log(props);
+
 // Funzione per la navigazione tra le pagine
 const navigate = async (page) => {
     currentPage.value = page;
     try {
-        const response = await axios.get(`/dashboard/tickets?page=${page}`);
+        const response = await axios.get(
+            `/api/tickets/pagination?page=${page}`
+        );
         console.log(currentPage);
         console.log(response.data);
 
@@ -60,6 +70,26 @@ console.log(props);
         <!-- page content -->
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div>
+                    <InputLabel
+                        for="operator_id"
+                        value="Operatore"
+                        class="text-gray-900 dark:text-gray-200"
+                    />
+                    <Datalist
+                        id="operator_id"
+                        :className="`mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md`"
+                        :options="
+                            props.operators.map((op) => ({
+                                id: op.id,
+                                name: `${op.name} ${op.surname}`,
+                            }))
+                        "
+                        placeholder="Select an operator"
+                        required
+                    />
+                    <InputError class="mt-2 text-red-600 dark:text-red-400" />
+                </div>
                 <!-- create new button -->
                 <div class="flex justify-end mb-4">
                     <Link
