@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\FilterTicketRequest;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 
@@ -24,5 +25,20 @@ class TicketController extends Controller
         ];
 
         return response()->json($pagination);
+    }
+
+    public function filter(FilterTicketRequest $request)
+    {
+        $validated_data = $request->validated();
+
+        dd($validated_data);
+
+        // return response()->json($pagination);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'apartments' => $apartments,
+        //     'services' => $services
+        // ]);
     }
 }

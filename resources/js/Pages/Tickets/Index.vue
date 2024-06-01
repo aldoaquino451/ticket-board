@@ -49,6 +49,20 @@ const navigate = async (page) => {
     }
 };
 
+const filter = async () => {
+    try {
+        const params = {
+            status: "queued",
+            operator_id: 10,
+        };
+        const response = await axios.get(`/api/tickets/filter`, { params });
+        // Gestisci la risposta come desiderato
+        console.log(response.data);
+    } catch (error) {
+        console.error("Error fetching ticket data:", error);
+    }
+};
+
 navigate(currentPage.value); // Carica i dati iniziali
 
 console.log(props);
@@ -90,6 +104,7 @@ console.log(props);
                     />
                     <InputError class="mt-2 text-red-600 dark:text-red-400" />
                 </div>
+
                 <!-- create new button -->
                 <div class="flex justify-end mb-4">
                     <Link
