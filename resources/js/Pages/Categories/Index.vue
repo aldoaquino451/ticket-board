@@ -2,7 +2,8 @@
 import { ref, defineProps } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm } from "@inertiajs/vue3";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
+import { onMounted } from 'vue';
+
 
 const props = defineProps({
   categories: Object,
@@ -14,21 +15,55 @@ const formStore = useForm({
   name: "",
 })
 const storeCategory = () => {
+  if (formStore.name == '') return;
   formStore.post(route("dashboard.categories.store"), {
     onSuccess: () => formStore.reset()
   });
 };
 
-// form per eliminare una categoria
+const flag = ref(true);
+const category_slug = ref('');
+const modal = ref();
+
 const deleteCategory = (slug) => {
-  useForm({ }).delete(route("dashboard.categories.destroy", slug));
+  if (slug == '') return;
+  useForm({ }).delete(route("dashboard.categories.destroy", slug), {
+    onSuccess: () => toggleModal(slug)
+  });
 };
+
+const toggleModal = (slug) => {
+  modal.value.style.display = flag.value ? 'flex' : 'none';
+  flag.value = !flag.value;
+  category_slug.value = slug;
+}
+
+onMounted(() => {
+  modal.value = document.getElementById('modal');
+  modal.value.style.display = 'none';
+});
 
 </script>
 
 
 <template>
   <Head title="Categorie" />
+
+  <div id="modal" class="fixed z-10 h-screen	w-full flex justify-center items-center bg-black bg-opacity-20">
+    <div class="p-6 bg-white rounded-lg flex flex-col gap-6 justify-center items-center shadow-xl">
+      <p>Sei sicuro di voler eliminare questo elemento?</p>
+      <div class="flex gap-3">
+        <button @click.prevent="toggleModal('')" class="text-white bg-gray-500 px-6 py-2 rounded-md">
+          Annulla
+        </button>
+        <form @submit.prevent="deleteCategory(category_slug)">
+          <button type="submit" class="text-white bg-red-500 px-6 py-2 rounded-md">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <AuthenticatedLayout>
     <!-- page name -->
@@ -50,14 +85,13 @@ const deleteCategory = (slug) => {
         </form>
 
         <!-- lista delle categorie -->
-        <ul class="my-list p-4 bg-white rounded-3xl">
+        <p v-if="!props.categories.length" class="text-center dark:text-white">Inserisci almeno una categoria per poterla visualizzare.</p>
+        <ul v-else class="my-list p-4 bg-white rounded-3xl">
           <li v-for="category in categories" class="my-item flex justify-between items-center"> 
             <span class="p-4">{{ category.name }}</span>
-            <form @submit.prevent="deleteCategory(category.slug)">
-              <button type="submit" class="my-icon cursor-pointer flex items-center justify-center">
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
-            </form>
+            <button @click.prevent="toggleModal(category.slug)" class="my-icon cursor-pointer flex items-center justify-center">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
           </li>
         </ul>
 
