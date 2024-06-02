@@ -92,6 +92,6 @@ Questo progetto è distribuito sotto la licenza MIT. Vedi il file [LICENSE](LICE
 
 ## Contatti
 
-Per qualsiasi domanda o feedback, puoi contattarci all'indirizzo email [aldo.aquino2909@gmail.com](mailto:aldo.aquino2909@gmail.com) e [aldo.aquino2909@gmail.com](mailto:aldo.aquino2909@gmail.com) o attraverso i profili LinkedIn [Aldo Aquino](https://www.linkedin.com/in/aldo-aquino-dev/) e [Michele Arcopinto](https://www.linkedin.com/in/michele-arcopinto/) 
+Per qualsiasi domanda o feedback, puoi contattarci all'indirizzo email [aldo.aquino2909@gmail.com](mailto:aldo.aquino2909@gmail.com) e [michele.arcopinto@outlook.it](mailto:michele.arcopinto@outlook.it) o attraverso i profili LinkedIn [Aldo Aquino](https://www.linkedin.com/in/aldo-aquino-dev/) e [Michele Arcopinto](https://www.linkedin.com/in/michele-arcopinto/) 
 
 
