@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCategoryRequest;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Stringable;
+use Illuminate\Support\Str;
+
 
 class CategoryController extends Controller
 {
@@ -11,7 +17,11 @@ class CategoryController extends Controller
    */
   public function index()
   {
-    //
+    $categories = Category::orderBY('created_at', 'DESC')->get();
+
+    return Inertia::render('Categories/Index', [
+      'categories' => $categories,
+    ]);
   }
 
   /**
@@ -25,9 +35,16 @@ class CategoryController extends Controller
   /**
    * Store a newly created resource in storage.
    */
-  public function store(Request $request)
+  public function store(StoreCategoryRequest $request)
   {
-    //
+    $validated_data = $request->validated();
+
+    Category::create([
+      'name' => $validated_data['name'],
+      'slug' => Str::slug($validated_data['name']),
+    ]);
+
+    return redirect()->back();
   }
 
   /**
@@ -57,8 +74,10 @@ class CategoryController extends Controller
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(string $id)
+  public function destroy(Request $request, Category $category)
   {
-    //
+    $category->delete();
+
+    return redirect()->route('dashboard.categories.index');
   }
 }
