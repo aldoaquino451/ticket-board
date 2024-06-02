@@ -6,7 +6,7 @@ import Textarea from "@/Components/Textarea.vue";
 import { Head, useForm, router } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 
 const props = defineProps({
     ticket: Object,
@@ -133,13 +133,50 @@ const submitDeleteNote = (id) => {
 //     formNote.post(route("dashboard.notes.store"));
 // };
 
-console.log(props.ticket);
-console.log(props.notes);
+
+const modal = ref();
+const note_id = ref(0);
+const flag = ref(true);
+
+const deleteItem = (id) => {
+  if (id == 0) return;
+  useForm({ }).delete(route("dashboard.notes.destroy", id), {
+    onSuccess: toggleModal(id)
+  });
+};
+
+const toggleModal = (id) => {
+  modal.value.style.display = flag.value ? 'flex' : 'none';
+  note_id.value = id;
+  flag.value = !flag.value;
+}
+
+onMounted(() => {
+  modal.value = document.getElementById('modal');
+  modal.value.style.display = 'none';
+});
 </script>
 
 <template>
     <Head title="Operatore" />
 
+    <!-- modale -->
+    <div id="modal" class="fixed z-10 h-screen	w-full flex justify-center items-center bg-black bg-opacity-20">
+      <div class="p-6 bg-white rounded-lg flex flex-col gap-6 justify-center items-center shadow-xl">
+        <p>Sei sicuro di voler eliminare questo elemento?</p>
+        <div class="flex gap-3">
+          <button @click.prevent="toggleModal(0)" class="text-white bg-gray-500 px-6 py-2 rounded-md">
+            Annulla
+          </button>
+          <form @submit.prevent="deleteItem(note_id)">
+            <button type="submit" class="text-white bg-red-500 px-6 py-2 rounded-md">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
     <AuthenticatedLayout>
         <template #header>
             <h2
@@ -357,6 +394,7 @@ console.log(props.notes);
                     </div>
                 </div>
 
+                <!-- note  -->
                 <div class="mt-8">
                     <p
                         class="text-lg font-semibold text-gray-800 dark:text-white"
@@ -374,20 +412,15 @@ console.log(props.notes);
                             <div class="p-4 pt-6 pb-14">
                                 <div class="note-box">
                                     <div class="text-gray-800 dark:text-white">
-                                        <form
-                                            @submit.prevent="
-                                                submitDeleteNote(note.id)
-                                            "
-                                        >
-                                            <PrimaryButton
-                                                class="delete-button absolute top-2 right-3 bg-red-500 hover:bg-red-600 focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 p-2 rounded-full text-white dark:text-white hover:text-white dark:bg-red-800 dark:hover:bg-red-700 dark:hover:text-gray-100 focus:outline-none"
-                                                :disabled="
-                                                    formCreateNote.processing
-                                                "
-                                            >
-                                                <i class="fas fa-times"></i>
-                                            </PrimaryButton>
-                                        </form>
+                                          <PrimaryButton
+                                              @click.prevent="toggleModal(note.id)"
+                                              class="delete-button absolute top-2 right-3 bg-red-500 hover:bg-red-600 focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 p-2 rounded-full text-white dark:text-white hover:text-white dark:bg-red-800 dark:hover:bg-red-700 dark:hover:text-gray-100 focus:outline-none"
+                                              :disabled="
+                                                  formCreateNote.processing
+                                              "
+                                          >
+                                              <i class="fas fa-times"></i>
+                                          </PrimaryButton>
                                         <form
                                             @submit.prevent="
                                                 submitUpdateNote(

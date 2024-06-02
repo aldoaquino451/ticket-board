@@ -81,10 +81,6 @@ class NoteController extends Controller
   {
     $note->delete();
 
-    $operator = Operator::where('id', $request->operator_id)->first();
-
-    // dd($operator);
-
-    return redirect()->route('dashboard.operators.show', ['operator' => $operator->slug]);
+    return redirect()->back();
   }
 }
