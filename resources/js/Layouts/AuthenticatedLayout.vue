@@ -209,6 +209,12 @@ const showingNavigationDropdown = ref(false);
                     >
                         Operatori
                     </ResponsiveNavLink>
+                    <ResponsiveNavLink
+                        :href="route('dashboard.categories.index')"
+                        :active="route().current('dashboard.categories.index')"
+                    >
+                        Categorie
+                    </ResponsiveNavLink>
                 </div>
 
                 <!-- Responsive Settings Options -->
