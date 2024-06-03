@@ -22,8 +22,13 @@ class FilterTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'sometimes|string|in:closed,queued,in progress,assigned',
-            'operator_id' => 'sometimes|int|exists:tickets,id',
+            'operator_id' => 'nullable|int|exists:operators,id',
+            'code' => 'nullable|numeric|digits_between:1,10|exists:tickets,code',
+            'category_id' => 'nullable|int|exists:categories,id',
+            'statuses' => 'nullable|array',
+            'statuses.*' => 'nullable|string|in:closed,queued,in progress,assigned',
+            'dateStart' => 'nullable|date',
+            'dateEnd' => 'nullable|date|after_or_equal:dateStart',
         ];
     }
 }

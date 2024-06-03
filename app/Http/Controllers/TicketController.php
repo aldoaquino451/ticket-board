@@ -24,6 +24,15 @@ class TicketController extends Controller
 
     $operators = Operator::all();
 
+    $categories = Category::all();
+
+    $statuses = [
+      ['id' => 'queued', 'name' => 'In coda'],
+      ['id' => 'assigned', 'name' => 'Assegnato'],
+      ['id' => 'in progress', 'name' => 'In lavorazione'],
+      ['id' => 'closed', 'name' => 'Chiuso'],
+    ];
+
     // $pagination = [
     //   'tickets' => $tickets->items(),
     //   'operators' => $operators,
@@ -42,6 +51,8 @@ class TicketController extends Controller
     return Inertia::render('Tickets/Index', [
       'tickets' => $tickets,
       'operators' => $operators,
+      'categories' => $categories,
+      'statuses' => $statuses
     ]);
   }
 

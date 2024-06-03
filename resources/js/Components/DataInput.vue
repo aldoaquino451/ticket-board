@@ -3,7 +3,8 @@
         :id="id"
         type="date"
         :class="className"
-        v-model="modelValue"
+        :value="modelValue"
+        @input="$emit('update:modelValue', $event.target.value)"
         :placeholder="placeholder"
         :disabled="isDisabled"
     />
