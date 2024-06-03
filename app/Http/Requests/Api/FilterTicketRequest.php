@@ -23,7 +23,7 @@ class FilterTicketRequest extends FormRequest
     {
         return [
             'operator_id' => 'nullable|int|exists:operators,id',
-            'code' => 'nullable|numeric|digits_between:1,10|exists:tickets,code',
+            'code' => 'nullable|numeric|digits:10|exists:tickets,code',
             'category_id' => 'nullable|int|exists:categories,id',
             'statuses' => 'nullable|array',
             'statuses.*' => 'nullable|string|in:closed,queued,in progress,assigned',

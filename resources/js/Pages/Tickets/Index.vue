@@ -120,7 +120,7 @@ watch(
         // Verifica che il campo code abbia esattamente 10 cifre
         const codeInvalid =
             newFilterValues.code &&
-            newFilterValues.code.toString().length !== 10;
+            newFilterValues.code.toString().length <= 10;
 
         // Verifica se solo la data di inizio è compilata senza la data di fine
         const dateIncomplete =
