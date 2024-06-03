@@ -5,7 +5,7 @@
         :value="modelValue"
         @change="$emit('update:modelValue', $event.target.value)"
     >
-        <option disabled value="">{{ placeholder }}</option>
+        <option value="">{{ placeholder }}</option>
         <option v-for="option in options" :key="option.id" :value="option.id">
             {{ option.name }}
         </option>

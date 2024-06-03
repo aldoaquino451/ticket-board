@@ -20,3 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/tickets/pagination', [TicketController::class, 'index']);
+
+Route::get('/tickets/filter', [TicketController::class, 'filter']);

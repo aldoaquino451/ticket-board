@@ -1,17 +1,23 @@
 <script setup>
-import { ref, defineProps } from "vue";
+import { ref, defineProps, watch } from "vue";
 import { Link } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import axios from "axios";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import Datalist from "@/Components/Datalist.vue";
+import TextInput from "@/Components/TextInput.vue";
+import DataInput from "@/Components/DataInput.vue";
+import StatusCheckbox from "@/Components/StatusCheckbox.vue";
 import Select from "@/Components/Select.vue";
 
 const props = defineProps({
     tickets: Object,
     operators: Object,
+    categories: Object,
+    statuses: Object,
 });
 
 console.log(props.operators);
@@ -49,6 +55,105 @@ const navigate = async (page) => {
     }
 };
 
+const initialFilterValues = {
+    code: "",
+    operator_id: null,
+    category_id: "",
+    dateStart: "",
+    dateEnd: "",
+    statuses: [],
+};
+
+const filterValues = ref({
+    code: "",
+    operator_id: "",
+    category_id: "",
+    dateStart: "",
+    dateEnd: "",
+    statuses: [],
+});
+
+const errors = ref({});
+
+const filter = async (page) => {
+    try {
+        errors.value = {}; // Resetta gli errori prima di una nuova richiesta
+        if (
+            filterValues.value.operator_id == 0 ||
+            filterValues.value.operator_id === undefined
+        ) {
+            filterValues.value.operator_id = "";
+        }
+        const params = { ...filterValues.value, page };
+        if (params.operator_id === null) {
+            delete params.operator_id;
+        }
+        const response = await axios.get(`/api/tickets/filter`, { params });
+
+        // Gestisci la risposta come desiderato
+        ticketsArray.value = response.data.tickets;
+        paginationArray.value = response.data.pagination;
+        currentPage.value = response.data.pagination.current_page;
+    } catch (error) {
+        if (error.response && error.response.status === 422) {
+            errors.value = error.response.data.errors;
+        } else {
+            console.error("Error fetching ticket data:", error);
+        }
+    }
+};
+
+const isFirstLoad = ref(true);
+const isFiltered = ref(false);
+
+watch(
+    () => filterValues.value,
+    (newFilterValues) => {
+        // Verifica se tutti i parametri sono vuoti, null o undefined
+        const allEmpty = Object.values(newFilterValues).every((value) => {
+            if (Array.isArray(value)) {
+                return value.length === 0;
+            }
+            return value === "" || value === null || value === undefined;
+        });
+
+        // Verifica che il campo code abbia esattamente 10 cifre
+        const codeInvalid =
+            newFilterValues.code &&
+            newFilterValues.code.toString().length !== 10;
+
+        // Verifica se solo la data di inizio è compilata senza la data di fine
+        const dateIncomplete =
+            newFilterValues.dateStart && !newFilterValues.dateEnd;
+
+        // Controlla se è il primo caricamento della pagina
+        if (isFirstLoad.value) {
+            console.log("First page load, not triggering filter.");
+            isFirstLoad.value = false; // Imposta su false dopo il primo caricamento
+            return;
+        }
+
+        // Condizione per non attivare la funzione filter
+        if (codeInvalid || dateIncomplete) {
+            console.log(
+                "Date range is incomplete or code is invalid, not triggering filter."
+            );
+            return;
+        }
+
+        if (allEmpty) {
+            console.log("campi vuoti");
+            navigate(1);
+            isFiltered.value = false;
+        } else {
+            console.log("Watcher triggered with values:", newFilterValues);
+            filter(1);
+            isFiltered.value = true;
+        }
+    },
+    { deep: true }
+);
+
 navigate(currentPage.value); // Carica i dati iniziali
 
 console.log(props);
@@ -70,26 +175,146 @@ console.log(props);
         <!-- page content -->
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div>
-                    <InputLabel
-                        for="operator_id"
-                        value="Operatore"
-                        class="text-gray-900 dark:text-gray-200"
-                    />
-                    <Datalist
-                        id="operator_id"
-                        :className="`mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md`"
-                        :options="
-                            props.operators.map((op) => ({
-                                id: op.id,
-                                name: `${op.name} ${op.surname}`,
-                            }))
-                        "
-                        placeholder="Select an operator"
-                        required
-                    />
-                    <InputError class="mt-2 text-red-600 dark:text-red-400" />
+                <div class="space-y-4">
+                    <div class="flex gap-2">
+                        <div class="w-1/2">
+                            <InputLabel
+                                for="operator_id"
+                                value="Operatore"
+                                class="text-gray-900 dark:text-gray-200"
+                            />
+                            <Datalist
+                                id="operator_id"
+                                :className="`mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md`"
+                                :options="
+                                    props.operators.map((op) => ({
+                                        id: op.id,
+                                        name: `${op.name} ${op.surname}`,
+                                    }))
+                                "
+                                v-model:modelValue="filterValues.operator_id"
+                                placeholder="Seleziona un operatore"
+                            />
+                            <InputError
+                                class="mt-2 text-red-600 dark:text-red-400"
+                                :message="errors.operator_id"
+                            />
+                        </div>
+                        <div class="w-1/2">
+                            <InputLabel
+                                for="code"
+                                value="Code"
+                                class="text-gray-900 dark:text-gray-200"
+                            />
+
+                            <TextInput
+                                id="code"
+                                type="number"
+                                class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
+                                placeholder="Inserisci il codice identificativo a 10 cifre"
+                                v-model:modelValue="filterValues.code"
+                            />
+
+                            <InputError
+                                class="mt-2 text-red-600 dark:text-red-400"
+                                :message="errors.code"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <InputLabel
+                            for="category_id"
+                            value="Categoria"
+                            class="text-gray-900 dark:text-gray-200"
+                        />
+                        <Select
+                            id="category_id"
+                            class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
+                            :options="props.categories"
+                            placeholder="Seleziona una categoria..."
+                            v-model:modelValue="filterValues.category_id"
+                        />
+                        <InputError
+                            class="mt-2 text-red-600 dark:text-red-400"
+                            :message="errors.category_id"
+                        />
+                    </div>
+
+                    <div class="flex gap-2">
+                        <div class="w-1/2">
+                            <InputLabel
+                                for="dateStart"
+                                value="Data Inizio"
+                                class="text-gray-900 dark:text-gray-200"
+                            />
+                            <DataInput
+                                id="dateStart"
+                                class="mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
+                                placeholder="Seleziona uno stato..."
+                                v-model:modelValue="filterValues.dateStart"
+                            />
+                            <InputError
+                                class="mt-2 text-red-600 dark:text-red-400"
+                                :message="errors.dateStart"
+                            />
+                        </div>
+
+                        <div class="w-1/2">
+                            <InputLabel
+                                for="DateEnd"
+                                value="Data Fine"
+                                class="text-gray-900 dark:text-gray-200"
+                            />
+                            <DataInput
+                                id="DateEnd"
+                                :className="
+                                    filterValues.dateStart !== ''
+                                        ? 'mt-1 block w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md'
+                                        : 'mt-1 block w-full bg-gray-200 dark:bg-gray-600 border-gray-300 dark:border-gray-500 text-gray-500 dark:text-gray-400 rounded-md cursor-not-allowed opacity-60'
+                                "
+                                placeholder="Seleziona uno stato..."
+                                v-model:modelValue="filterValues.dateEnd"
+                                :isDisabled="filterValues.dateStart === ''"
+                                :min="filterValues.dateStart"
+                            />
+                            <InputError
+                                class="mt-2 text-red-600 dark:text-red-400"
+                                :message="errors.dateEnd"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <StatusCheckbox
+                                v-for="status in statuses"
+                                :key="status.id"
+                                :id="`status-${status.id}`"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 rounded-md"
+                                :label="status.name"
+                                :valueCheckbox="status.id"
+                                v-model:modelValue="filterValues.statuses"
+                            />
+                            <InputError
+                                class="mt-2 text-red-600 dark:text-red-400"
+                                :message="errors.statuses"
+                            />
+                        </div>
+                        <div>
+                            <PrimaryButton
+                                class="lg:mt-6"
+                                :isDisabled="!isFiltered"
+                                @click="
+                                    filterValues = { ...initialFilterValues }
+                                "
+                            >
+                                Resetta
+                            </PrimaryButton>
+                        </div>
+                    </div>
                 </div>
+
                 <!-- create new button -->
                 <div class="flex justify-end mb-4">
                     <Link
@@ -207,7 +432,11 @@ console.log(props);
                         >
                             <li>
                                 <button
-                                    @click="navigate(currentPage - 1)"
+                                    @click="
+                                        !isFiltered
+                                            ? navigate(currentPage - 1)
+                                            : filter(currentPage - 1)
+                                    "
                                     class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                                     :class="
                                         currentPage === 1
@@ -225,7 +454,11 @@ console.log(props);
                                 :key="page"
                             >
                                 <button
-                                    @click="navigate(page)"
+                                    @click="
+                                        !isFiltered
+                                            ? navigate(page)
+                                            : filter(page)
+                                    "
                                     class="flex items-center justify-center px-3 h-8 leading-tight border border-gray-300"
                                     :class="
                                         currentPage === page
@@ -239,7 +472,11 @@ console.log(props);
 
                             <li>
                                 <button
-                                    @click="navigate(currentPage + 1)"
+                                    @click="
+                                        !isFiltered
+                                            ? navigate(currentPage + 1)
+                                            : filter(currentPage + 1)
+                                    "
                                     class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                                     :class="
                                         currentPage ===
